@@ -11,3 +11,8 @@
   font-size: 1.8rem;
   letter-spacing: -0.025rem;
 }
+@mixin formLabel {
+  @include ShareFormTitle;
+  font-size: 1.3rem;
+  letter-spacing: -0.018rem;
+}
