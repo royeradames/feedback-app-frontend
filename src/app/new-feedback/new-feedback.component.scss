@@ -1,0 +1,123 @@
+@import "src/sass/variables";
+@import "src/sass/mixins";
+
+$grey: #f7f8fd;
+$white: #fff;
+.go-back {
+  justify-self: start;
+  cursor: pointer;
+  text-transform: capitalize;
+  & img {
+    margin-right: 1.5rem;
+  }
+}
+
+.new-feedback {
+  min-height: 100vh;
+  // move elements away from the edge
+  padding: 3.4rem 2.4rem 7.2rem;
+  // contract elements
+  background-color: $grey;
+
+  // layout
+  display: grid;
+  grid-template-rows: max-content 1fr;
+  row-gap: 5.5rem;
+}
+$left-padding: 2.4rem;
+
+.form {
+  // layout
+  position: relative;
+  display: grid;
+  grid-template:
+    "form-name" max-content
+    "." 2.4rem
+    "title"
+    "." 2.4rem
+    "category"
+    "." 2.4rem
+    "detail"
+    "." 4rem
+    "add"
+    "." 1.6rem
+    "cancel"/ 1fr;
+
+  // contrast form from background
+  background-color: $white;
+  // move elements away from the edge
+  padding: 4.4rem $left-padding;
+  // round corners
+  border-radius: 1rem;
+
+  &-icon {
+    // size icon to small
+    height: 4rem;
+    width: 4rem;
+
+    // move half way outside of form
+    position: absolute;
+    top: -2rem;
+    left: $left-padding;
+  }
+
+  // inputs share styles
+  &-group {
+    // arrange inputs
+    display: grid;
+    grid-template:
+      "title" max-content
+      "." 0.7rem
+      "description" max-content
+      "." 1.6rem
+      "input" max-content;
+
+    & label {
+      grid-area: title;
+      @include formLabel;
+    }
+    & p {
+      grid-area: description;
+      @include formDescription;
+    }
+
+    &-input {
+      grid-area: input;
+      @include formInput;
+    }
+    &-dropdown {
+      grid-area: input;
+    }
+  }
+  // assign grid area
+  &-name {
+    grid-area: form-name;
+    @include formTitle;
+  }
+  &-title {
+    grid-area: title;
+    & input {
+      height: 4.8rem;
+    }
+  }
+  &-category {
+    grid-area: category;
+  }
+  &-detail {
+    grid-area: detail;
+    & textarea {
+      height: 12rem;
+    }
+  }
+  &-button {
+    @include formButton;
+  }
+  &-add {
+    grid-area: add;
+    @include formButton;
+  }
+  &-cancel {
+    grid-area: cancel;
+    @include formButton($blue-800);
+  }
+}
