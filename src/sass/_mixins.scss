@@ -1,0 +1,8 @@
+@import "./variables";
+/* form styles */
+@mixin ShareFormTitle {
+  color: $blue-800;
+  font-family: "Jost", sans-serif;
+  font-weight: bold;
+  text-transform: capitalize;
+}
