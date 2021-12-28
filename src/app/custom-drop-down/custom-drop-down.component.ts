@@ -34,4 +34,6 @@ export class CustomDropDownComponent implements OnInit {
       label: 'Bug',
     },
   ];
+
+  fieldText: string = this.optionList[0].label;
 }
