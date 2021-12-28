@@ -8,4 +8,24 @@
       (click)="isHidden = !isHidden; isFocus = !isFocus"
     />
   </label>
+
+  <div class="dropdown-list" [ngClass]="{ hide: isHidden }">
+    <!-- onwrap all options from optionList -->
+    <label
+      class="dropdown-list-option"
+      *ngFor="let option of optionList; index as i; first as isFirst"
+    >
+      <span class="dropdown-list-option-text">{{ option.label }}</span>
+      <input
+        class="form-control-select dropdown-list-option-icon"
+        type="radio"
+        [value]="option.inputValue"
+        [name]="option.inputName"
+        [checked]="isFirst"
+        (click)="
+          fieldText = option.label; isHidden = !isHidden; isFocus = !isFocus
+        "
+      />
+    </label>
+  </div>
 </div>
