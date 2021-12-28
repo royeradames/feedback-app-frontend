@@ -1,0 +1,93 @@
+@import "src/sass/variables";
+@import "src/sass/mixins";
+/* because the default HTML option cannot be customize to give same experience to all users, built a drop-down with a button as select and radios buttons with labels as the options */
+.dropdown {
+  position: relative;
+  &-field {
+    @include formInput;
+    // be default cover 100% of the width
+    width: 100%;
+    // show that button can be clicked
+    cursor: pointer;
+    // move text and icon to oppositve conners
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    // focus on select when active or selected
+    &:focus,
+    &:active {
+      border: solid 0.2rem $purple;
+    }
+    &-icon {
+      appearance: none;
+      // replace checked icon with down arrow
+      background-image: url("/assets/shared/icon-arrow-down.svg");
+      width: 0.8rem;
+      height: 0.5rem;
+      display: inline-block;
+      background-size: cover;
+      background-repeat: no-repeat;
+
+      // have a transition to change the icon when clicked
+      transition: background-image 0.1s;
+    }
+  }
+  &-list {
+    position: absolute;
+    box-shadow: 0 1rem 4rem -0.7rem #373f68;
+    border-radius: 1rem;
+    width: 100%;
+    margin-top: 1.6rem;
+
+    // don't let the list be transperant
+    background-color: #ffffff;
+
+    // add border top to all drop-dwon options except the first
+    & :not(:first-of-type) {
+      border-top: solid 0.1rem rgba($blue-800, 0.15);
+    }
+
+    /* a list of radios button */
+    &-option {
+      padding: $input-padding;
+      @include formDescription;
+      // have text and icon on each conner
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      // make options show pointer mouse
+      cursor: pointer;
+      // change the color to purple when option is being hover
+      color: inherit;
+
+      &:active,
+      &:focus,
+      &:hover {
+        color: $purple;
+      }
+
+      &-icon {
+        // hide default radio circle
+        appearance: none;
+
+        // have a check mark icon when radio input is marked
+        &:checked {
+          background-image: url("/assets/shared/icon-check.svg");
+          height: 0.8rem;
+          width: 1.1rem;
+          display: inline-block;
+          background-size: cover;
+          background-repeat: no-repeat;
+        }
+      }
+    }
+  }
+}
+
+.hide {
+  display: none;
+}
+.focus {
+  border: solid 0.2rem $purple;
+}
