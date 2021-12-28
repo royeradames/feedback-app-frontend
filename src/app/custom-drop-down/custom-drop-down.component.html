@@ -1,0 +1,11 @@
+<div class="dropdown">
+  <label class="dropdown-field" [ngClass]="{ focus: isFocus }">
+    <span class="downdown-field-text">{{ fieldText }}</span>
+    <input
+      class="dropdown-field-icon"
+      type="checkbox"
+      id="category"
+      (click)="isHidden = !isHidden; isFocus = !isFocus"
+    />
+  </label>
+</div>
