@@ -23,3 +23,17 @@
   font-weight: normal;
   line-height: 1.6rem;
 }
+
+@mixin formInput {
+  // have the same text styles as the description
+  @include formDescription;
+  border: none;
+  padding: $input-padding;
+  border-radius: 0.5rem;
+  background-color: $blue-100;
+
+  &:focus,
+  &:active {
+    outline-color: $purple;
+  }
+}
