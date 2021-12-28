@@ -1,46 +1,30 @@
 <article class="new-feedback">
 
-  <h2 class="go-back"><svg width="7" height="10" xmlns="http://www.w3.org/2000/svg">
-      <path d="M6 9L2 5l4-4" stroke="#4661E6" stroke-width="2" fill="none" fill-rule="evenodd" />
-    </svg>go back</h2>
+  <button class="go-back new-feedback-go-back"> <img src="assets/shared/icon-arrow-left.svg"
+      alt="blue arrow that points to the left">go back
+  </button>
+
   <form action="post" class="new-feedback-form form">
-    <div class="from-icon"><svg width="56" height="56" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <radialGradient cx="103.9%" cy="-10.387%" fx="103.9%" fy="-10.387%" r="166.816%" id="a">
-            <stop stop-color="#E84D70" offset="0%" />
-            <stop stop-color="#A337F6" offset="53.089%" />
-            <stop stop-color="#28A7ED" offset="100%" />
-          </radialGradient>
-        </defs>
-        <g fill="none" fill-rule="evenodd">
-          <circle fill="url(#a)" cx="28" cy="28" r="28" />
-          <path fill="#FFF" fill-rule="nonzero"
-            d="M30.343 36v-5.834h5.686v-4.302h-5.686V20h-4.597v5.864H20v4.302h5.746V36z" />
-        </g>
-      </svg></div>
-    <h1 class="form-title">create new feedback</h1>
-    <div class="form-group">
-      <label for="title">feedback title</label>
-      <p class="form-caption">add a short, descriptive headline</p>
-      <input type="text" class="form-control" id="title">
+    <img class="new-feedback-icon form-icon" src="assets/shared/icon-new-feedback.svg"
+      alt="white plus cross in a purple and blue gradient background">
+    <h1 class="form-name">create new feedback</h1>
+    <div class="form-group form-title">
+      <label class="form-group-title" for="title">feedback title</label>
+      <p class="form-group-description form-description">Add a short, descriptive headline</p>
+      <input class="form-group-input " type="text" id="title">
     </div>
-    <div class="form-group">
-      <label for="category">category</label>
-      <p class="form-caption">choose a category for your feedback</p>
-      <select class="form-control" id="category">
-        <option value="feature" class="form-control-select">Feature</option>
-        <option value="UI" class="form-control-select">UI</option>
-        <option value="UX" class="form-control-select">UX</option>
-        <option value="enhancement" class="form-control-select">Enhancement</option>
-        <option value="bug" class="form-control-select">Bug</option>
-      </select>
-      <div class="form-group">
-        <label for="detail">feedback detail</label>
-        <p class="form-caption">include any specific comments on what should be improved, added, etc.</p>
-        <input type="text" class="form-control" id="detail">
-      </div>
+    <div class="form-group form-category">
+      <label for="category" class="drop-down-label form-group-title">category</label>
+      <p class="form-group-description form-caption">Choose a category for your feedback</p>
+      <app-custom-drop-down class="form-group-dropdown"></app-custom-drop-down>
+
     </div>
-    <button class="button from-add">add feedback</button>
+    <div class="form-group form-detail">
+      <label for="detail">feedback detail</label>
+      <p class="form-caption">Include any specific comments on what should be improved, added, etc.</p>
+      <textarea type="text-area" class=" form-group-input form-control" id="detail"></textarea>
+    </div>
+    <button class="button form-add">add feedback</button>
     <button class="button form-cancel">cancel</button>
   </form>
 </article>
