@@ -37,3 +37,14 @@
     outline-color: $purple;
   }
 }
+@mixin formButton($color: $purple) {
+  padding: 1.05rem 0 1.05rem 0;
+  border-radius: 1rem;
+  font-family: "Jost", sans-serif;
+  color: $blue-200;
+  background-color: $color;
+  font-size: 1.3rem;
+  text-transform: capitalize;
+  font-weight: bold;
+  cursor: pointer;
+}
