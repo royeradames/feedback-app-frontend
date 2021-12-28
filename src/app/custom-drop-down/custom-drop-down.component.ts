@@ -10,4 +10,5 @@ export class CustomDropDownComponent implements OnInit {
 
   ngOnInit(): void {}
   isHidden: boolean = true;
+  isFocus: boolean = false;
 }
