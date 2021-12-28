@@ -16,3 +16,10 @@
   font-size: 1.3rem;
   letter-spacing: -0.018rem;
 }
+@mixin formDescription {
+  font-family: "Jost", sans-serif;
+  font-size: 1.3rem;
+  color: $blue-500;
+  font-weight: normal;
+  line-height: 1.6rem;
+}
