@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { actor } from "@/lib/fixtures";
 import { type Comment } from "@/lib/domain";
 import { useDemo } from "./demo-provider";
@@ -13,6 +13,7 @@ function CommentRow({ comment }: { comment: Comment }) {
   const demo = useDemo();
   const user = actor(comment.authorId);
   const [replying, setReplying] = useState(false);
+  const replyToggle = useRef<HTMLButtonElement>(null);
   return (
     <article className="comment" id={comment.id}>
       <div className="comment-heading">
@@ -34,6 +35,7 @@ function CommentRow({ comment }: { comment: Comment }) {
           <p>@{user.username}</p>
         </div>
         <button
+          ref={replyToggle}
           className="quiet"
           type="button"
           disabled={!demo.canMutate}
@@ -53,7 +55,11 @@ function CommentRow({ comment }: { comment: Comment }) {
           feedbackId={comment.feedbackId}
           parentId={comment.id}
           replyLabel={user.username}
-          onDone={() => setReplying(false)}
+          onDone={() => {
+            // The reply form unmounts; return focus to the button that opened it.
+            setReplying(false);
+            replyToggle.current?.focus();
+          }}
         />
       )}
     </article>

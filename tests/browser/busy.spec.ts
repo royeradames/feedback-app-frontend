@@ -85,3 +85,43 @@ test('a pending feedback save keeps the form usable, busy and single-submit', as
     page.getByRole('heading', { name: 'Saved once while busy', exact: true }),
   ).toBeVisible();
 });
+
+test('keyboard voting, commenting and replying keep focus where the person is', async ({
+  page,
+}) => {
+  await page.goto('/');
+  const vote = page.getByRole('button', {
+    name: /^Upvote Add tags for solutions \(\d+ votes\)$/,
+  });
+  await vote.focus();
+  await page.keyboard.press('Enter');
+  await expect(vote).toContainText('113');
+  await expect(vote).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(vote).toContainText('112');
+  await expect(vote).toBeFocused();
+  await page.goto('/feedback/seed-01');
+  await page.getByLabel('Comment', { exact: true }).fill('Kept focus');
+  const post = page.getByRole('button', { name: 'Post comment', exact: true });
+  await post.focus();
+  await page.keyboard.press('Enter');
+  await expect(
+    page.getByRole('heading', { name: '3 comments and replies' }),
+  ).toBeVisible();
+  await expect(post).toBeFocused();
+  const reply = page.getByRole('button', {
+    name: 'Reply to Suzanne Chang',
+    exact: true,
+  });
+  await reply.click();
+  await page.getByRole('button', { name: 'Cancel reply' }).click();
+  await expect(reply).toBeFocused();
+  await reply.click();
+  await page.getByLabel('Reply', { exact: true }).fill('Reply keeps focus');
+  await page.getByRole('button', { name: 'Post reply' }).focus();
+  await page.keyboard.press('Enter');
+  await expect(
+    page.getByRole('heading', { name: '4 comments and replies' }),
+  ).toBeVisible();
+  await expect(reply).toBeFocused();
+});
