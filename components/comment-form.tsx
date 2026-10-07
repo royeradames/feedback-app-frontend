@@ -74,7 +74,11 @@ export function CommentForm({
               Cancel reply
             </button>
           )}
-          <button className="button" type="submit">
+          <button
+            className="button"
+            type="submit"
+            aria-busy={demo.busy || undefined}
+          >
             {parentId ? "Post reply" : "Post comment"}
           </button>
         </div>

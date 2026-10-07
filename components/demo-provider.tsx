@@ -219,10 +219,11 @@ export function useDemo() {
     retry: store.retry,
     reload: store.reload,
     useMemorySample: store.useMemorySample,
+    // Only storage that cannot take changes disables controls. A pending save
+    // keeps them focusable with aria-busy; the store itself blocks re-entry.
     canMutate:
-      !state.busy &&
-      (state.storage.kind === "ready" ||
-        state.storage.kind === "memory" ||
-        state.storage.kind === "ephemeral"),
+      state.storage.kind === "ready" ||
+      state.storage.kind === "memory" ||
+      state.storage.kind === "ephemeral",
   };
 }

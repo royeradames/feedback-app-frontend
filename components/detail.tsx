@@ -68,6 +68,7 @@ export function Detail({ id }: { id: string }) {
     (comment) => comment.feedbackId === id,
   );
   async function remove() {
+    if (demo.busy) return;
     if (
       !window.confirm(
         "Delete this feedback and its comments from this browser’s demo?",
@@ -127,6 +128,7 @@ export function Detail({ id }: { id: string }) {
           className="danger"
           type="button"
           disabled={!demo.canMutate}
+          aria-busy={demo.busy || undefined}
           onClick={() => void remove()}
         >
           Delete feedback

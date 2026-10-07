@@ -200,7 +200,11 @@ export function FeedbackForm({ item }: { item?: Feedback }) {
             >
               Cancel
             </button>
-            <button className="button" type="submit">
+            <button
+              className="button"
+              type="submit"
+              aria-busy={demo.busy || undefined}
+            >
               {demo.busy ? "Saving…" : item ? "Save changes" : "Add feedback"}
             </button>
           </div>

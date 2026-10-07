@@ -20,6 +20,7 @@ export function FeedbackCard({
         className="vote"
         type="button"
         disabled={!demo.canMutate}
+        aria-busy={demo.busy || undefined}
         aria-pressed={demo.snapshot.votedIds.includes(item.id)}
         aria-label={`Upvote ${item.title} (${votes} votes)`}
         onClick={() => void demo.run({ kind: "vote", id: item.id })}

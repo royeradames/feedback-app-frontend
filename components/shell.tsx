@@ -104,7 +104,7 @@ export function Shell({ children }: { children: ReactNode }) {
             className="quiet"
             type="button"
             onClick={demo.reload}
-            disabled={demo.busy}
+            aria-busy={demo.busy || undefined}
           >
             Load saved data
           </button>
@@ -113,6 +113,7 @@ export function Shell({ children }: { children: ReactNode }) {
               className="quiet"
               type="button"
               onClick={() => void demo.retry()}
+              aria-busy={demo.busy || undefined}
             >
               Retry saving changes
             </button>
@@ -122,6 +123,7 @@ export function Shell({ children }: { children: ReactNode }) {
               className="quiet"
               type="button"
               onClick={demo.useMemorySample}
+              aria-busy={demo.busy || undefined}
             >
               Explore sample in memory
             </button>
