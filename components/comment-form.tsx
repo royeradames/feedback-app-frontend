@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useDemo } from "./demo-provider";
 import { commentTextSchema } from "@/lib/domain";
 export function CommentForm({
@@ -16,11 +16,13 @@ export function CommentForm({
   const demo = useDemo();
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
+  const field = useRef<HTMLTextAreaElement>(null);
   const id = parentId ? "reply-" + parentId : "new-comment";
   async function submit() {
     const parsed = commentTextSchema.safeParse(content);
     if (!parsed.success) {
       setError(parsed.error.issues[0]?.message ?? "Check your comment.");
+      field.current?.focus();
       return;
     }
     setError("");
@@ -56,6 +58,7 @@ export function CommentForm({
           {parentId ? "Reply" : "Comment"}
         </label>
         <textarea
+          ref={field}
           id={id}
           rows={3}
           maxLength={250}

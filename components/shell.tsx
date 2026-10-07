@@ -1,17 +1,23 @@
 "use client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
+import { readTheme, subscribeTheme, writeTheme } from "@/lib/theme";
 import { useDemo } from "./demo-provider";
 export function Shell({ children }: { children: ReactNode }) {
   const demo = useDemo();
   const router = useRouter();
   const [shortcuts, setShortcuts] = useState(false);
   const help = useRef<HTMLDetailsElement>(null);
-  const [theme, setTheme] = useState("system");
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-  }, [theme]);
+  // The inline head script applies the saved theme before paint; this only
+  // mirrors it into the select after hydration.
+  const theme = useSyncExternalStore(subscribeTheme, readTheme, () => "system");
   useEffect(() => {
     function key(event: KeyboardEvent) {
       if (event.key === "Escape") {
@@ -87,7 +93,7 @@ export function Shell({ children }: { children: ReactNode }) {
             Appearance{" "}
             <select
               value={theme}
-              onChange={(event) => setTheme(event.target.value)}
+              onChange={(event) => writeTheme(event.target.value)}
             >
               <option value="system">System</option>
               <option value="light">Light</option>

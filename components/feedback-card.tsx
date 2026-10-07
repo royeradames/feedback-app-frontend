@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import Link from "next/link";
 import { commentCount, voteCount, type Feedback } from "@/lib/domain";
 import { useDemo } from "./demo-provider";
@@ -12,6 +13,7 @@ export function FeedbackCard({
   const demo = useDemo();
   const Heading = heading;
   const votes = voteCount(demo.snapshot, item);
+  const comments = commentCount(demo.snapshot, item.id);
   return (
     <article className="feedback-card" data-feedback-id={item.id}>
       <button
@@ -35,11 +37,15 @@ export function FeedbackCard({
       <Link
         className="comment-count"
         href={"/feedback/" + item.id + "#comments"}
-        aria-label={
-          commentCount(demo.snapshot, item.id) + " comments on " + item.title
-        }
+        aria-label={`${comments} ${comments === 1 ? "comment" : "comments"} on ${item.title}`}
       >
-        <span aria-hidden="true">◌</span> {commentCount(demo.snapshot, item.id)}
+        <Image
+          src="/assets/shared/icon-comments.svg"
+          width={18}
+          height={16}
+          alt=""
+        />
+        {comments}
       </Link>
     </article>
   );

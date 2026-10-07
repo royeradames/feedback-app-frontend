@@ -11,6 +11,13 @@ import {
   type FeedbackInput,
 } from "@/lib/domain";
 import { useDemo } from "./demo-provider";
+// Field order on screen, mapped to each control's id, for focusing the first error.
+const fieldIds = [
+  ["title", "title"],
+  ["category", "category"],
+  ["status", "feedback-status"],
+  ["description", "description"],
+] as const;
 export function FeedbackForm({ item }: { item?: Feedback }) {
   const demo = useDemo();
   const router = useRouter();
@@ -28,14 +35,15 @@ export function FeedbackForm({ item }: { item?: Feedback }) {
     onSubmit: async ({ value }) => {
       const parsed = feedbackInputSchema.safeParse(value);
       if (!parsed.success) {
-        setErrors(
-          Object.fromEntries(
-            parsed.error.issues.map((issue) => [
-              String(issue.path[0]),
-              issue.message,
-            ]),
-          ),
+        const next: Record<string, string> = Object.fromEntries(
+          parsed.error.issues.map((issue) => [
+            String(issue.path[0]),
+            issue.message,
+          ]),
         );
+        setErrors(next);
+        const first = fieldIds.find(([name]) => next[name]);
+        if (first) document.getElementById(first[1])?.focus();
         return;
       }
       setErrors({});

@@ -4,9 +4,7 @@ test('board filters, all four sorts and native keyboard selection', async ({
   page,
 }) => {
   await page.goto('/');
-  await expect(
-    page.getByRole('heading', { name: '6 suggestions' }),
-  ).toBeVisible();
+  await expect(page.getByText('Showing 6', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'bug', exact: true }).click();
   await expect(page.locator('.feedback-list article')).toHaveCount(1);
   await page.getByRole('button', { name: 'All', exact: true }).click();

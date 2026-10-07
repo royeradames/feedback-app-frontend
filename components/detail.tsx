@@ -91,7 +91,11 @@ export function Detail({ id }: { id: string }) {
         include a fictional sample baseline of {item.baselineVotes}.
       </p>
       <section className="panel" id="comments">
-        <h2>{comments.length} comments and replies</h2>
+        <h2>
+          {comments.length === 1
+            ? "1 comment"
+            : `${comments.length} comments and replies`}
+        </h2>
         {comments
           .filter((comment) => comment.parentId === null)
           .map((comment) => (

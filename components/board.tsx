@@ -48,7 +48,10 @@ export function Board() {
       </aside>
       <section aria-labelledby="suggestion-heading">
         <div className="list-toolbar">
-          <h1 id="suggestion-heading">{items.length} suggestions</h1>
+          <div className="list-heading">
+            <h1 id="suggestion-heading">Suggestions</h1>
+            <p aria-live="polite">Showing {items.length}</p>
+          </div>
           <label>
             Sort by{" "}
             <select
