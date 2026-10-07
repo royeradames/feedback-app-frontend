@@ -1,3 +1,15 @@
+# Product Feedback browser-local foundation
+
+This Next.js foundation demonstrates a fictional suggestion board, details, roadmap and local editing. It does not provide accounts, a shared backend, real author permissions or public profiles. Historical Angular source/assets are retained; original root toolchain files are under historical/angular. See reference/fixture-provenance.md for the sample-data limitations.
+
+Use Node 24. Install dependencies and generate the new lock before running npm run dev, npm run typecheck, npm run lint, npm test, npm run build and npm run test:browser. The source-preparation candidate has not yet run those checks. Browser verification uses an isolated Chrome process and port 4394.
+
+Changes save under one versioned browser-local key. Another tab’s changes require explicit reload; malformed saved data is not overwritten. Clearing browser data deletes local work. No network service receives feedback or comments. The demo must not be used for real personal feedback.
+
+The current official Frontend Mentor packet/design comparison and hosted multiuser authentication remain outstanding. The original README follows.
+
+---
+
 # FeedbackAppFrontend
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.0.2.

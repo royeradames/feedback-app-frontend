@@ -44,3 +44,10 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# Next foundation
+.next/
+.test-state/
+test-results/
+playwright-report/
+*.tsbuildinfo
