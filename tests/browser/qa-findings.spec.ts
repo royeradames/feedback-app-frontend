@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { ready } from './helpers';
 
 declare global {
   interface Window {
@@ -11,6 +12,7 @@ test('the appearance choice survives reload and applies before the app hydrates'
   page,
 }) => {
   await page.goto('/');
+  await ready(page);
   await page.getByLabel('Appearance').selectOption('dark');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   // Record every data-theme value from the first byte of the next load, so a

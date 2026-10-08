@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { ready } from './helpers';
 const storageKey = 'royer-feedback-demo:v1';
 
 // Saving waits for the cross-tab Web Lock, so holding it from another tab keeps
@@ -90,6 +91,7 @@ test('keyboard voting, commenting and replying keep focus where the person is', 
   page,
 }) => {
   await page.goto('/');
+  await ready(page);
   const vote = page.getByRole('button', {
     name: /^Upvote Add tags for solutions \(\d+ votes\)$/,
   });
