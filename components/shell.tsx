@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   useEffect,
@@ -10,6 +9,45 @@ import {
 } from "react";
 import { readTheme, subscribeTheme, writeTheme } from "@/lib/theme";
 import { useDemo } from "./demo-provider";
+
+// Recovery actions for the current storage state. They appear in the top
+// banner when something needs attention, and in the footer tools otherwise.
+function DataActions() {
+  const demo = useDemo();
+  return (
+    <>
+      <button
+        className="btn btn-soft"
+        type="button"
+        onClick={demo.reload}
+        aria-busy={demo.busy || undefined}
+      >
+        Load saved data
+      </button>
+      {demo.unsaved && demo.storage.kind === "memory" && demo.canMutate && (
+        <button
+          className="btn btn-soft"
+          type="button"
+          onClick={() => void demo.retry()}
+          aria-busy={demo.busy || undefined}
+        >
+          Retry saving changes
+        </button>
+      )}
+      {demo.storage.kind === "corrupt" && (
+        <button
+          className="btn btn-soft"
+          type="button"
+          onClick={demo.useMemorySample}
+          aria-busy={demo.busy || undefined}
+        >
+          Explore sample in memory
+        </button>
+      )}
+    </>
+  );
+}
+
 export function Shell({ children }: { children: ReactNode }) {
   const demo = useDemo();
   const router = useRouter();
@@ -18,6 +56,11 @@ export function Shell({ children }: { children: ReactNode }) {
   // The inline head script applies the saved theme before paint; this only
   // mirrors it into the select after hydration.
   const theme = useSyncExternalStore(subscribeTheme, readTheme, () => "system");
+  const attention =
+    demo.storage.kind === "conflict" ||
+    demo.storage.kind === "corrupt" ||
+    demo.storage.kind === "ephemeral" ||
+    (demo.storage.kind === "memory" && demo.unsaved);
   useEffect(() => {
     function key(event: KeyboardEvent) {
       if (event.key === "Escape") {
@@ -31,7 +74,7 @@ export function Shell({ children }: { children: ReactNode }) {
         event.altKey ||
         event.repeat ||
         !(event.target instanceof HTMLElement) ||
-        event.target.closest("input,textarea,select,[contenteditable=true]")
+        event.target.closest("input,textarea,select,[contenteditable=true],[role=listbox]")
       )
         return;
       const destination =
@@ -56,9 +99,7 @@ export function Shell({ children }: { children: ReactNode }) {
   }, [shortcuts, router]);
   useEffect(() => {
     function before(event: BeforeUnloadEvent) {
-      if (demo.unsaved) {
-        event.preventDefault();
-      }
+      if (demo.unsaved) event.preventDefault();
     }
     window.addEventListener("beforeunload", before);
     return () => window.removeEventListener("beforeunload", before);
@@ -68,29 +109,33 @@ export function Shell({ children }: { children: ReactNode }) {
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <header className="site-header">
-        <Link className="brand" href="/">
-          Product Feedback <span>Browser-local demo</span>
-        </Link>
-        <nav aria-label="Main">
-          <Link href="/">Suggestions</Link>
-          <Link href="/roadmap">Roadmap</Link>
-          <Link className="button" href="/feedback/new">
-            Add feedback
-          </Link>
-        </nav>
-      </header>
-      <section className="demo-notice" aria-label="Demo identity and storage">
+      {attention && (
+        <section className="storage-alert" aria-label="Saved data needs attention">
+          <p>{demo.message}</p>
+          <div className="tool-row">
+            <DataActions />
+          </div>
+        </section>
+      )}
+      <noscript>
+        <p className="storage-alert">
+          This is a browser-local demo. JavaScript is required to load or change
+          saved feedback. No form data is sent without it.
+        </p>
+      </noscript>
+      <main id="main">{children}</main>
+      <footer className="demo-bar">
         <p>
-          <strong>Demo participant</strong> · Fictional sample feedback. Changes
-          stay in this browser; no account or shared board.
+          <strong>Demo board.</strong> The feedback is fictional sample data.
+          Your changes stay in this browser; nothing is sent and there is no
+          account.
         </p>
         <p className="storage-message" role="status">
           {demo.message}
         </p>
-        <div className="actions">
+        <div className="tool-row">
           <label className="appearance">
-            Appearance{" "}
+            <span>Appearance</span>
             <select
               value={theme}
               onChange={(event) => writeTheme(event.target.value)}
@@ -100,68 +145,31 @@ export function Shell({ children }: { children: ReactNode }) {
               <option value="dark">Dark</option>
             </select>
           </label>
-          <button
-            className="quiet"
-            type="button"
-            onClick={demo.reload}
-            aria-busy={demo.busy || undefined}
-          >
-            Load saved data
-          </button>
-          {demo.unsaved && demo.storage.kind === "memory" && demo.canMutate && (
-            <button
-              className="quiet"
-              type="button"
-              onClick={() => void demo.retry()}
-              aria-busy={demo.busy || undefined}
-            >
-              Retry saving changes
-            </button>
-          )}
-          {demo.storage.kind === "corrupt" && (
-            <button
-              className="quiet"
-              type="button"
-              onClick={demo.useMemorySample}
-              aria-busy={demo.busy || undefined}
-            >
-              Explore sample in memory
-            </button>
-          )}
-          <details ref={help}>
-            <summary>Keyboard help</summary>
-            <p>
-              Tab through links and controls; Enter follows links; Space presses
-              buttons. Optional shortcuts: B suggestions, R roadmap, N new
-              feedback, ? help, Escape closes this help.
-            </p>
-            <label className="check">
-              <input
-                type="checkbox"
-                checked={shortcuts}
-                onChange={(event) => setShortcuts(event.target.checked)}
-              />{" "}
-              Enable letter shortcuts for this visit
-            </label>
-          </details>
+          {!attention && <DataActions />}
         </div>
-      </section>
-      <noscript>
-        <p className="panel">
-          This is a browser-local demo. JavaScript is required to load or change
-          saved feedback. No form data is sent without it.
+        <details ref={help} className="keyboard-help">
+          <summary>Keyboard help</summary>
+          <p>
+            Tab moves through links and controls; Enter follows links; Space
+            presses buttons. Optional shortcuts: B suggestions, R roadmap, N new
+            feedback, ? help, Escape closes this help.
+          </p>
+          <label className="check">
+            <input
+              type="checkbox"
+              checked={shortcuts}
+              onChange={(event) => setShortcuts(event.target.checked)}
+            />
+            <span>Enable letter shortcuts for this visit</span>
+          </label>
+        </details>
+        <p className="credit">
+          Design and sample data from the{" "}
+          <a href="https://www.frontendmentor.io/challenges/product-feedback-app-wbvUYqjR6">
+            Frontend Mentor product feedback challenge
+          </a>
+          .
         </p>
-      </noscript>
-      <main id="main">{children}</main>
-      <footer>
-        <p>
-          Historical fictional sample data adapted from the Product Feedback
-          exercise. Local editing is a demonstration, not a user-permission
-          model.
-        </p>
-        <a href="https://www.frontendmentor.io/challenges/product-feedback-app-wbvUYqjR6">
-          Frontend Mentor challenge
-        </a>
       </footer>
     </div>
   );

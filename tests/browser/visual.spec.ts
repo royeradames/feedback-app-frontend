@@ -81,23 +81,26 @@ async function caretGeometry(page: Page, select: Locator) {
 const selects: {
   name: string;
   path: string;
+  native: boolean;
   find: (page: Page) => Locator;
 }[] = [
-  { name: 'Sort by', path: '/', find: (page) => page.getByLabel('Sort by') },
   {
     name: 'Appearance',
     path: '/',
+    native: true,
     find: (page) => page.getByLabel('Appearance'),
   },
   {
     name: 'Category',
     path: '/feedback/new',
-    find: (page) => page.getByLabel('Category', { exact: true }),
+    native: false,
+    find: (page) => page.getByRole('button', { name: /^Category/ }),
   },
   {
-    name: 'Status',
+    name: 'Update Status',
     path: '/feedback/seed-01/edit',
-    find: (page) => page.getByLabel('Status', { exact: true }),
+    native: false,
+    find: (page) => page.getByRole('button', { name: /^Update Status/ }),
   },
 ];
 
@@ -110,6 +113,8 @@ test('select carets keep real padding from the right edge at 400, 768 and 1440',
       await page.setViewportSize({ width, height: 900 });
       for (const select of selects) {
         await page.goto(select.path);
+        // The form remounts once this browser's saved demo has loaded.
+        await expect(page.locator('.storage-message')).not.toHaveText(/Loading/);
         const control = select.find(page);
         await expect(control).toBeVisible();
         const geometry = await caretGeometry(page, control);
@@ -117,11 +122,13 @@ test('select carets keep real padding from the right edge at 400, 768 and 1440',
         expect(geometry.rightInk, where).toBeGreaterThan(0);
         // The official design keeps the arrow 24px from the field's right edge.
         expect(geometry.inset, where).toBeGreaterThanOrEqual(20);
-        // The option text box ends before the caret starts, so long labels never
-        // run under the arrow.
-        expect(geometry.paddingRight, where).toBeGreaterThanOrEqual(
-          geometry.caretFromRight + 4,
-        );
+        // A native select's option text box ends before the caret starts, so
+        // long labels never run under the arrow. The custom dropdowns lay the
+        // label and caret out side by side, so this only applies to native ones.
+        if (select.native)
+          expect(geometry.paddingRight, where).toBeGreaterThanOrEqual(
+            geometry.caretFromRight + 4,
+          );
       }
     }
   }
@@ -134,9 +141,10 @@ test('comment counts use the design comment icon on board, detail and roadmap', 
     await page.setViewportSize({ width, height: 900 });
     for (const path of ['/', '/feedback/seed-01', '/roadmap']) {
       await page.goto(path);
-      const link = page.locator('.comment-count').first();
+      // Phone roadmap tabs hide the other stages; check the first one shown.
+      const link = page.locator('.comment-count:visible').first();
       await expect(link).toBeVisible();
-      await expect(link).toHaveAccessibleName(/^\d+ comments on .+/);
+      await expect(link).toHaveAccessibleName(/^\d+ comments? on .+/);
       await expect(link).not.toContainText('◌');
       const icon = link.locator('img');
       await expect(icon).toHaveCount(1);
