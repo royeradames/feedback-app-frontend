@@ -38,11 +38,15 @@ export function FeedbackCard({
       <button
         className="vote"
         type="button"
-        disabled={!demo.canMutate}
-        aria-busy={demo.busy || undefined}
+        // Busy, not disabled: while the saved demo loads (or storage can't take
+        // changes, which the banner explains) the button stays focusable.
+        aria-disabled={!demo.canMutate || undefined}
+        aria-busy={demo.busy || demo.storage.kind === "loading" || undefined}
         aria-pressed={demo.snapshot.votedIds.includes(item.id)}
         aria-label={`Upvote ${item.title} (${pluralize(votes, "vote", "votes")})`}
-        onClick={() => void demo.run({ kind: "vote", id: item.id })}
+        onClick={() => {
+          if (demo.canMutate) void demo.run({ kind: "vote", id: item.id });
+        }}
       >
         <ChevronUp />
         <span>{votes}</span>

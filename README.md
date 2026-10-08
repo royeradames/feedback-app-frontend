@@ -6,7 +6,7 @@ Use Node 24 and `npm ci`. The checks are `npm run lint`, `npm run typecheck`, `n
 
 Changes save under one versioned browser-local key. Another tab’s changes require explicit reload; malformed saved data is not overwritten. Clearing browser data deletes local work. No network service receives feedback or comments. The demo must not be used for real personal feedback.
 
-The pages follow the official Frontend Mentor design at its mobile, tablet and desktop frames, with two deliberate differences: text keeps a 16px minimum (the design uses 13–15px labels), and the brand card reads "Product Feedback" so the visible name matches the site name. A dark appearance and a footer with the demo notice, saved-data status and keyboard help are additions. Hosted multiuser authentication remains out of scope.
+The pages follow the official Frontend Mentor design at its mobile, tablet and desktop frames, with two deliberate differences: text keeps a 16px minimum (the design uses 13–15px labels), so on phones narrower than about 400px "+ Add Feedback" wraps under Sort instead of sharing its row, and the brand card reads "Product Feedback" so the visible name matches the site name. A dark appearance and a footer with the demo notice, saved-data status and keyboard help are additions. Hosted multiuser authentication remains out of scope.
 
 ---
 

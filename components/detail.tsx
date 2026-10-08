@@ -39,9 +39,12 @@ function CommentRow({ comment }: { comment: Comment }) {
         ref={replyToggle}
         className="reply-toggle"
         type="button"
-        disabled={!demo.canMutate}
+        aria-disabled={!demo.canMutate || undefined}
+        aria-busy={demo.storage.kind === "loading" || undefined}
         aria-expanded={replying}
-        onClick={() => setReplying(!replying)}
+        onClick={() => {
+          if (demo.canMutate) setReplying(!replying);
+        }}
       >
         Reply<span className="sr-only"> to {user.name}</span>
       </button>

@@ -40,7 +40,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         {/* One WebSite identity on every route, matching og:site_name. */}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(webSiteJsonLd).replace(/</g, "\\u003c"),
+          }}
         />
         <DemoProvider>
           <Shell>{children}</Shell>

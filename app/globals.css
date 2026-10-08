@@ -225,7 +225,8 @@ fieldset {
   text-decoration: underline;
   text-underline-offset: 0.2em;
 }
-button:disabled {
+button:disabled,
+button[aria-disabled="true"]:not([aria-busy="true"]) {
   cursor: not-allowed;
   opacity: 0.6;
 }
@@ -657,7 +658,7 @@ main {
   flex: none;
   color: var(--blue);
 }
-.vote:hover:not(:disabled) {
+.vote:hover:not(:disabled, [aria-disabled="true"]) {
   background: var(--soft-hover);
 }
 .vote[aria-pressed="true"] {
@@ -1027,17 +1028,16 @@ textarea {
   border: 0;
   border-bottom: 4px solid transparent;
   background: none;
-  color: var(--ink);
-  opacity: 0.6;
+  color: var(--muted);
   font-weight: 700;
   white-space: nowrap;
   letter-spacing: -0.18px;
 }
 .roadmap-tabs [role="tab"]:hover {
-  opacity: 0.85;
+  color: var(--ink);
 }
 .roadmap-tabs [role="tab"][aria-selected="true"] {
-  opacity: 1;
+  color: var(--ink);
   border-bottom-color: var(--dot);
 }
 .roadmap-grid {
