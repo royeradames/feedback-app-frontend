@@ -1,29 +1,30 @@
 import { test, expect } from '@playwright/test';
+import { choose } from './helpers';
 const storageKey = 'royer-feedback-demo:v1';
 test('board filters, all four sorts and native keyboard selection', async ({
   page,
 }) => {
   await page.goto('/');
-  await expect(page.getByText('Showing 6', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'bug', exact: true }).click();
+  await expect(page.getByText('6 Suggestions', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Bug', exact: true }).click();
   await expect(page.locator('.feedback-list article')).toHaveCount(1);
   await page.getByRole('button', { name: 'All', exact: true }).click();
-  await page.getByLabel('Sort by').selectOption('votes-asc');
+  await choose(page, /^Sort by/, 'Least Upvotes');
   await expect(page.locator('.feedback-list article').first()).toHaveAttribute(
     'data-feedback-id',
     'seed-06',
   );
-  await page.getByLabel('Sort by').selectOption('comments-desc');
+  await choose(page, /^Sort by/, 'Most Comments');
   await expect(page.locator('.feedback-list article').first()).toHaveAttribute(
     'data-feedback-id',
     'seed-02',
   );
-  await page.getByLabel('Sort by').selectOption('comments-asc');
+  await choose(page, /^Sort by/, 'Least Comments');
   await expect(page.locator('.feedback-list article').first()).toHaveAttribute(
     'data-feedback-id',
     'seed-06',
   );
-  await page.getByLabel('Sort by').selectOption('votes-desc');
+  await choose(page, /^Sort by/, 'Most Upvotes');
   await expect(page.locator('.feedback-list article').first()).toHaveAttribute(
     'data-feedback-id',
     'seed-01',
@@ -31,7 +32,7 @@ test('board filters, all four sorts and native keyboard selection', async ({
   await page.getByRole('button', { name: 'UI', exact: true }).focus();
   await page.keyboard.press('Space');
   await expect(
-    page.getByRole('heading', { name: 'No suggestions in this category' }),
+    page.getByRole('heading', { name: 'There is no feedback yet.' }),
   ).toBeVisible();
   await page.getByRole('button', { name: 'Show all categories' }).click();
   await expect(page.locator('.feedback-list article')).toHaveCount(6);
@@ -72,7 +73,7 @@ test('validated CRUD, cancel, local reload and roadmap status', async ({
   page,
 }) => {
   await page.goto('/feedback/new');
-  await page.getByRole('button', { name: 'Add feedback', exact: true }).click();
+  await page.getByRole('button', { name: 'Add Feedback', exact: true }).click();
   await expect(page.getByText('Enter a title.', { exact: true })).toBeVisible();
   await expect(page.getByLabel('Feedback title')).toHaveAttribute(
     'aria-invalid',
@@ -82,31 +83,38 @@ test('validated CRUD, cancel, local reload and roadmap status', async ({
   await page
     .getByLabel('Feedback detail')
     .fill('A meaningful local suggestion');
-  await page.getByRole('button', { name: 'Add feedback', exact: true }).click();
+  await page.getByRole('button', { name: 'Add Feedback', exact: true }).click();
   await expect(page).toHaveURL(/\/feedback\/local-/);
   const url = page.url();
-  await expect(page.getByText('Demo participant · suggestion')).toBeVisible();
-  await page.getByRole('link', { name: 'Edit feedback', exact: true }).click();
+  await expect(
+    page.getByRole('heading', { name: 'Keyboard-friendly idea', exact: true }),
+  ).toBeVisible();
+  await page.getByRole('link', { name: 'Edit Feedback', exact: true }).click();
+  await expect(page.getByRole('button', { name: /^Update Status/ })).toHaveText(
+    /Suggestion/,
+  );
   await page.getByLabel('Feedback title').fill('Do not save this');
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
   await expect(
     page.getByRole('heading', { name: 'Keyboard-friendly idea', exact: true }),
   ).toBeVisible();
-  await page.getByRole('link', { name: 'Edit feedback', exact: true }).click();
-  await page.getByLabel('Status', { exact: true }).selectOption('planned');
-  await page.getByRole('button', { name: 'Save changes' }).click();
+  await page.getByRole('link', { name: 'Edit Feedback', exact: true }).click();
+  await choose(page, /^Update Status/, 'Planned');
+  await page.getByRole('button', { name: 'Save Changes' }).click();
   await expect(page).toHaveURL(url);
-  await expect(page.getByText('Demo participant · planned')).toBeVisible();
   await page.reload();
-  await expect(page.getByText('Demo participant · planned')).toBeVisible();
+  await page.getByRole('link', { name: 'Edit Feedback', exact: true }).click();
+  await expect(page.getByRole('button', { name: /^Update Status/ })).toHaveText(
+    /Planned/,
+  );
   await page.goto('/roadmap');
   await expect(
     page.getByRole('link', { name: 'Keyboard-friendly idea', exact: true }),
   ).toBeVisible();
-  await page.goto(url);
-  await page.getByText('Delete this demo feedback', { exact: true }).click();
-  page.once('dialog', (dialog) => dialog.accept());
+  await page.goto(url + '/edit');
+  await page.getByRole('button', { name: 'Delete', exact: true }).click();
   await page
+    .getByRole('dialog')
     .getByRole('button', { name: 'Delete feedback', exact: true })
     .click();
   await expect(page).toHaveURL(/\/$/);
@@ -121,34 +129,32 @@ test('comments and stable replies survive reload; cancel reply does not post', a
   page,
 }) => {
   await page.goto('/feedback/seed-01');
-  await page.getByRole('button', { name: 'Post comment', exact: true }).click();
+  await page.getByRole('button', { name: 'Post Comment', exact: true }).click();
   await expect(
     page.getByText('Write a comment.', { exact: true }),
   ).toBeVisible();
-  await page.getByLabel('Comment', { exact: true }).fill('A local comment');
-  await page.getByRole('button', { name: 'Post comment', exact: true }).click();
-  await expect(
-    page.getByRole('heading', { name: '3 comments and replies' }),
-  ).toBeVisible();
+  await page.getByLabel('Add Comment').fill('A local comment');
+  await page.getByRole('button', { name: 'Post Comment', exact: true }).click();
+  await expect(page.getByRole('heading', { name: '3 Comments' })).toBeVisible();
   await page
     .getByRole('button', { name: 'Reply to Suzanne Chang', exact: true })
     .click();
-  await page.getByLabel('Reply', { exact: true }).fill('A local reply');
+  await page.getByLabel('Reply to @upbeat1811').fill('A local reply');
   await page.getByRole('button', { name: 'Cancel reply' }).click();
   await expect(page.getByText('A local reply', { exact: true })).toHaveCount(0);
   await page
     .getByRole('button', { name: 'Reply to Suzanne Chang', exact: true })
     .click();
-  await page.getByLabel('Reply', { exact: true }).fill('A local reply');
-  await page.getByRole('button', { name: 'Post reply' }).click();
+  await page.getByLabel('Reply to @upbeat1811').fill('A local reply');
+  await page.getByRole('button', { name: 'Post Reply' }).click();
   await expect(page.getByText('A local reply', { exact: false })).toBeVisible();
   await expect(
-    page.getByRole('heading', { name: '4 comments and replies' }),
+    page.getByRole('heading', { name: '4 Comments' }),
   ).toBeVisible();
   await page.reload();
   await expect(page.getByText('A local reply', { exact: false })).toBeVisible();
   await expect(
-    page.getByRole('heading', { name: '4 comments and replies' }),
+    page.getByRole('heading', { name: '4 Comments' }),
   ).toBeVisible();
 });
 test('malformed storage is preserved, and storage denial produces an honest memory-only result', async ({
@@ -210,7 +216,7 @@ test('stale tabs cannot overwrite a newer save and reload discards an open draft
     'Preserve this draft',
   );
   await expect(
-    page.getByRole('button', { name: 'Save changes' }),
+    page.getByRole('button', { name: 'Save Changes' }),
   ).toBeDisabled();
   page.once('dialog', (dialog) => dialog.dismiss());
   await page.getByRole('button', { name: 'Load saved data' }).click();
@@ -282,7 +288,7 @@ test('no JavaScript keeps sample readable and all mutation controls disabled', a
   ).toBeVisible();
   await expect(page.getByLabel('Feedback title')).toBeDisabled();
   await expect(
-    page.getByRole('button', { name: 'Add feedback', exact: true }),
+    page.getByRole('button', { name: 'Add Feedback', exact: true }),
   ).toBeDisabled();
   await context.close();
 });
@@ -310,7 +316,7 @@ test('compare-and-save rejects a stale tab even when its storage event is missed
   await expect(other.getByRole('status').first()).toContainText(
     'Saved in this browser',
   );
-  await page.getByRole('button', { name: 'Save changes' }).click();
+  await page.getByRole('button', { name: 'Save Changes' }).click();
   await expect(page.getByRole('status').first()).toContainText(
     'Another tab changed',
   );
@@ -335,7 +341,7 @@ test('a valid 100-character unbroken title wraps on board, detail and roadmap', 
   await page
     .getByLabel('Feedback detail')
     .fill('A valid long-title layout case.');
-  await page.getByRole('button', { name: 'Add feedback', exact: true }).click();
+  await page.getByRole('button', { name: 'Add Feedback', exact: true }).click();
   await expect(page).toHaveURL(/\/feedback\/local-/);
   const detailUrl = page.url();
   async function checkTitle() {
@@ -369,13 +375,16 @@ test('a valid 100-character unbroken title wraps on board, detail and roadmap', 
     await page.goto(detailUrl);
     await checkTitle();
   }
-  await page.getByRole('link', { name: 'Edit feedback', exact: true }).click();
-  await page.getByLabel('Status', { exact: true }).selectOption('planned');
-  await page.getByRole('button', { name: 'Save changes' }).click();
+  await page.getByRole('link', { name: 'Edit Feedback', exact: true }).click();
+  await choose(page, /^Update Status/, 'Planned');
+  await page.getByRole('button', { name: 'Save Changes' }).click();
   await expect(page).toHaveURL(detailUrl);
   for (const width of [400, 641, 768, 1100]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/roadmap');
+    // Phones show one stage at a time, as tabs.
+    if (width < 640)
+      await page.getByRole('tab', { name: /^Planned/ }).click();
     await checkTitle();
   }
 });

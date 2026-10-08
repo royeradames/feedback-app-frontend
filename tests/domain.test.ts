@@ -116,3 +116,11 @@ test('boundary rejects duplicate IDs, missing relationships, malformed and overs
   assert.throws(() => parseDocument('{broken'));
   assert.throws(() => parseDocument(' '.repeat(500001)));
 });
+
+test('counts read with the right plural for 0, 1 and 2', async () => {
+  const { pluralize } = await import('../lib/plural.ts');
+  assert.equal(pluralize(0, 'Comment', 'Comments'), '0 Comments');
+  assert.equal(pluralize(1, 'Comment', 'Comments'), '1 Comment');
+  assert.equal(pluralize(2, 'Suggestion', 'Suggestions'), '2 Suggestions');
+  assert.equal(pluralize(1, 'vote', 'votes'), '1 vote');
+});
