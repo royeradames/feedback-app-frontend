@@ -113,6 +113,8 @@ test('select carets keep real padding from the right edge at 400, 768 and 1440',
       await page.setViewportSize({ width, height: 900 });
       for (const select of selects) {
         await page.goto(select.path);
+        // The form remounts once this browser's saved demo has loaded.
+        await expect(page.locator('.storage-message')).not.toHaveText(/Loading/);
         const control = select.find(page);
         await expect(control).toBeVisible();
         const geometry = await caretGeometry(page, control);

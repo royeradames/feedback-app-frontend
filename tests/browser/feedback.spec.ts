@@ -147,12 +147,12 @@ test('comments and stable replies survive reload; cancel reply does not post', a
     .click();
   await page.getByLabel('Reply to @upbeat1811').fill('A local reply');
   await page.getByRole('button', { name: 'Post Reply' }).click();
-  await expect(page.getByText('A local reply', { exact: false })).toBeVisible();
+  await expect(page.locator('.comment-content', { hasText: 'A local reply' })).toBeVisible();
   await expect(
     page.getByRole('heading', { name: '4 Comments' }),
   ).toBeVisible();
   await page.reload();
-  await expect(page.getByText('A local reply', { exact: false })).toBeVisible();
+  await expect(page.locator('.comment-content', { hasText: 'A local reply' })).toBeVisible();
   await expect(
     page.getByRole('heading', { name: '4 Comments' }),
   ).toBeVisible();
