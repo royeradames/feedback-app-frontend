@@ -1,15 +1,30 @@
 "use client";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useRef, useState, useSyncExternalStore } from "react";
 import { voteCount } from "@/lib/domain";
 import { useDemo } from "./demo-provider";
 import { FeedbackCard } from "./feedback-card";
 import { GoBack } from "./go-back";
 import { statusLanes } from "./labels";
 
+// Phones show one stage at a time as tabs; tablet and desktop show all three
+// columns, so the tab roles apply only on phones. The server renders the
+// phone version; the client corrects it after hydration.
+const phoneQuery = "(max-width: 39.99rem)";
+function subscribePhone(change: () => void) {
+  const query = matchMedia(phoneQuery);
+  query.addEventListener("change", change);
+  return () => query.removeEventListener("change", change);
+}
+
 // Three columns from tablet up. On a phone the columns become tabs, as in the
 // design; the same sections serve as the tab panels.
 export function Roadmap() {
+  const phone = useSyncExternalStore(
+    subscribePhone,
+    () => matchMedia(phoneQuery).matches,
+    () => true,
+  );
   const { snapshot } = useDemo();
   const [selected, setSelected] = useState(1);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -75,7 +90,7 @@ export function Roadmap() {
           <section
             key={lane.status}
             id={"lane-" + lane.status}
-            role="tabpanel"
+            role={phone ? "tabpanel" : undefined}
             aria-labelledby={"heading-" + lane.status}
             className={
               "roadmap-lane " + lane.status + (selected === index ? " selected" : "")

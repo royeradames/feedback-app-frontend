@@ -85,6 +85,8 @@ test('roadmap columns are ordered by upvotes and phone tabs switch columns', asy
     page.getByRole('heading', { level: 1, name: 'Roadmap' }),
   ).toBeVisible();
   await expect(page.getByRole('link', { name: 'Go Back' })).toBeVisible();
+  // All three columns show from tablet up, so there are no tab panels there.
+  await expect(page.getByRole('tabpanel')).toHaveCount(0);
   for (const lane of ['planned', 'in-progress', 'live']) {
     const votes = await page
       .locator(`.roadmap-lane.${lane} .vote span:last-child`)
