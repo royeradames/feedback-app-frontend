@@ -14,15 +14,21 @@
   --bar-ink: #f2f4fe;
   --soft: #f2f4ff;
   --soft-hover: #cfd7ff;
+  /* Link text on --soft-hover keeps 4.5:1. */
+  --link-hover: #3b52c3;
   --blue: #4661e6;
-  --blue-hover: #7c91f9;
+  /* Button hovers keep the design's hue and darken, so the light button text
+     keeps 4.5:1 (WCAG 1.4.3). The design's lighter hovers fell to 2.3-3.1:1. */
+  --blue-hover: #3e56cd;
   --link: #4661e6;
   --purple: #ad1fea;
-  --purple-hover: #c75af6;
+  --purple-hover: #991bcf;
+  --purple-light: #c75af6;
   --dark: #3a4374;
-  --dark-hover: #656ea3;
-  --red: #d73737;
-  --red-hover: #e98888;
+  --dark-hover: #5d6798;
+  /* The design's #d73737 gives 4.26:1 under the button text. */
+  --red: #cd3535;
+  --red-hover: #b52e2e;
   --planned: #f49f85;
   --progress: #ad1fea;
   --live: #62bcfa;
@@ -44,6 +50,7 @@
     --soft: #2c3354;
     --soft-hover: #3c4570;
     --link: #a9b8ff;
+    --link-hover: #c9d3ff;
     --dark-hover: #5d6798;
     --line: #3a4166;
     --comment-icon: #5b6488;
@@ -62,6 +69,7 @@
   --soft: #2c3354;
   --soft-hover: #3c4570;
   --link: #a9b8ff;
+  --link-hover: #c9d3ff;
   --dark-hover: #5d6798;
   --line: #3a4166;
   --comment-icon: #5b6488;
@@ -214,6 +222,7 @@ fieldset {
 }
 .btn-soft:hover {
   background: var(--soft-hover);
+  color: var(--link-hover);
 }
 .btn-text {
   border: 0;
@@ -416,6 +425,7 @@ main {
 }
 .chip:hover {
   background: var(--soft-hover);
+  color: var(--link-hover);
 }
 .chip[aria-pressed="true"] {
   background: var(--blue);
@@ -433,7 +443,7 @@ main {
   padding: 0.5rem 0;
 }
 .roadmap-summary-head a:hover {
-  color: var(--blue-hover);
+  color: var(--link-hover);
 }
 .roadmap-summary ul {
   list-style: none;
@@ -565,7 +575,7 @@ main {
 }
 :root[data-theme="dark"] .dropdown [role="option"].active,
 :root[data-theme="dark"] .dropdown [role="option"]:hover {
-  color: var(--purple-hover);
+  color: var(--purple-light);
 }
 .dropdown [role="option"] svg {
   flex: none;
@@ -835,7 +845,7 @@ main {
   font-weight: 700;
 }
 :root[data-theme="dark"] .mention {
-  color: var(--purple-hover);
+  color: var(--purple-light);
 }
 .comment .reply-form {
   grid-area: form;

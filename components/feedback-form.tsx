@@ -123,6 +123,7 @@ export function FeedbackForm({ item }: { item?: Feedback }) {
                   <p id="title-help">Add a short, descriptive headline</p>
                   <input
                     id="title"
+                    type="text"
                     value={field.state.value}
                     maxLength={100}
                     onChange={(event) => field.handleChange(event.target.value)}
