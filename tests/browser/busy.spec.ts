@@ -32,7 +32,7 @@ test('a pending vote keeps controls focusable and busy, and blocks a second acti
 }) => {
   await page.goto('/');
   const vote = page.getByRole('button', {
-    name: /^Upvote Add tags for solutions \(\d+ votes\)$/,
+    name: /^\d+ votes, upvote Add tags for solutions$/,
   });
   const load = page.getByRole('button', { name: 'Load saved data' });
   await expect(vote).toContainText('112');
@@ -93,7 +93,7 @@ test('keyboard voting, commenting and replying keep focus where the person is', 
   await page.goto('/');
   await ready(page);
   const vote = page.getByRole('button', {
-    name: /^Upvote Add tags for solutions \(\d+ votes\)$/,
+    name: /^\d+ votes, upvote Add tags for solutions$/,
   });
   await vote.focus();
   await page.keyboard.press('Enter');

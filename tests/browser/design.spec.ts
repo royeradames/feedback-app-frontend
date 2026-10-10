@@ -178,8 +178,8 @@ test('vote names use the right plural', async ({ page }) => {
   await page.getByLabel('Feedback Detail').fill('One vote reads in the singular.');
   await page.getByRole('button', { name: 'Add Feedback', exact: true }).click();
   await expect(page).toHaveURL(/\/feedback\/local-/);
-  const vote = page.getByRole('button', { name: /^Upvote Singular vote check/ });
-  await expect(vote).toHaveAccessibleName('Upvote Singular vote check (0 votes)');
+  const vote = page.getByRole('button', { name: /upvote Singular vote check$/ });
+  await expect(vote).toHaveAccessibleName('0 votes, upvote Singular vote check');
   await vote.click();
-  await expect(vote).toHaveAccessibleName('Upvote Singular vote check (1 vote)');
+  await expect(vote).toHaveAccessibleName('1 vote, upvote Singular vote check');
 });

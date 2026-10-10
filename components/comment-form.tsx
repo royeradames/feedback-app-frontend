@@ -58,6 +58,7 @@ export function CommentForm({
       noValidate
     >
       <fieldset disabled={!demo.canMutate}>
+        <legend className="sr-only">{parentId ? "Reply" : "New comment"}</legend>
         {parentId ? (
           <label className="sr-only" htmlFor={id}>
             Reply to @{replyLabel}

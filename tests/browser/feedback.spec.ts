@@ -42,18 +42,18 @@ test('one demo actor vote persists, toggles once and leaves sample totals intact
 }) => {
   await page.goto('/');
   const vote = page.getByRole('button', {
-    name: /^Upvote Add tags for solutions \(\d+ votes\)$/,
+    name: /^\d+ votes, upvote Add tags for solutions$/,
     exact: true,
   });
   await expect(vote).toBeEnabled();
   await expect(vote).toHaveAccessibleName(
-    'Upvote Add tags for solutions (112 votes)',
+    '112 votes, upvote Add tags for solutions',
   );
   await vote.click();
   await expect(vote).toHaveAttribute('aria-pressed', 'true');
   await expect(vote).toContainText('113');
   await expect(vote).toHaveAccessibleName(
-    'Upvote Add tags for solutions (113 votes)',
+    '113 votes, upvote Add tags for solutions',
   );
   await expect(page.getByRole('status').first()).toContainText(
     'Saved in this browser',
@@ -61,12 +61,12 @@ test('one demo actor vote persists, toggles once and leaves sample totals intact
   await page.reload();
   await expect(vote).toContainText('113');
   await expect(vote).toHaveAccessibleName(
-    'Upvote Add tags for solutions (113 votes)',
+    '113 votes, upvote Add tags for solutions',
   );
   await vote.click();
   await expect(vote).toContainText('112');
   await expect(vote).toHaveAccessibleName(
-    'Upvote Add tags for solutions (112 votes)',
+    '112 votes, upvote Add tags for solutions',
   );
 });
 test('validated CRUD, cancel, local reload and roadmap status', async ({
@@ -170,7 +170,7 @@ test('malformed storage is preserved, and storage denial produces an honest memo
   await expect(page.getByRole('status')).toContainText('malformed');
   await expect(
     page.getByRole('button', {
-      name: /^Upvote Add tags for solutions \(\d+ votes\)$/,
+      name: /^\d+ votes, upvote Add tags for solutions$/,
     }),
   ).toBeDisabled();
   expect(
@@ -187,13 +187,13 @@ test('malformed storage is preserved, and storage denial produces an honest memo
   await second.goto('/');
   await second
     .getByRole('button', {
-      name: /^Upvote Add tags for solutions \(\d+ votes\)$/,
+      name: /^\d+ votes, upvote Add tags for solutions$/,
     })
     .click();
   await expect(second.getByRole('status')).toContainText('Saving failed');
   await expect(
     second.getByRole('button', {
-      name: /^Upvote Add tags for solutions \(\d+ votes\)$/,
+      name: /^\d+ votes, upvote Add tags for solutions$/,
     }),
   ).toContainText('113');
   await denied.close();
@@ -208,7 +208,7 @@ test('stale tabs cannot overwrite a newer save and reload discards an open draft
   await page.getByLabel('Feedback title').fill('Preserve this draft');
   await other
     .getByRole('button', {
-      name: /^Upvote Add tags for solutions \(\d+ votes\)$/,
+      name: /^\d+ votes, upvote Add tags for solutions$/,
     })
     .click();
   await expect(page.getByRole('status').first()).toContainText('another tab');
@@ -310,7 +310,7 @@ test('compare-and-save rejects a stale tab even when its storage event is missed
   await other.goto('/');
   await other
     .getByRole('button', {
-      name: /^Upvote Add tags for solutions \(\d+ votes\)$/,
+      name: /^\d+ votes, upvote Add tags for solutions$/,
     })
     .click();
   await expect(other.getByRole('status').first()).toContainText(
@@ -326,7 +326,7 @@ test('compare-and-save rejects a stale tab even when its storage event is missed
   ).toBeVisible();
   await expect(
     other.getByRole('button', {
-      name: /^Upvote Add tags for solutions \(\d+ votes\)$/,
+      name: /^\d+ votes, upvote Add tags for solutions$/,
     }),
   ).toContainText('113');
   await other.close();

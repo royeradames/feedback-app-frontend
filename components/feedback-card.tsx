@@ -43,7 +43,8 @@ export function FeedbackCard({
         aria-disabled={!demo.canMutate || undefined}
         aria-busy={demo.busy || demo.storage.kind === "loading" || undefined}
         aria-pressed={demo.snapshot.votedIds.includes(item.id)}
-        aria-label={`Upvote ${item.title} (${pluralize(votes, "vote", "votes")})`}
+        // The name starts with the count people see, so voice control can say it.
+        aria-label={`${pluralize(votes, "vote", "votes")}, upvote ${item.title}`}
         onClick={() => {
           if (demo.canMutate) void demo.run({ kind: "vote", id: item.id });
         }}
