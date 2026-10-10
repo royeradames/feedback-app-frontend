@@ -83,6 +83,24 @@ for (const theme of ['light', 'dark'] as const) {
   }
 }
 
+for (const theme of ['light', 'dark'] as const) {
+  test(`the active option of a keyboard-focused list keeps 4.5:1 (${theme})`, async ({ page }) => {
+    await page.emulateMedia({ colorScheme: theme });
+    await page.goto('/');
+    await ready(page);
+    await page.getByRole('button', { name: /^Sort by/ }).focus();
+    await page.keyboard.press('Enter');
+    const list = page.getByRole('listbox');
+    await expect(list).toBeVisible();
+    await expect(list).toBeFocused();
+    await page.keyboard.press('ArrowDown');
+    const option = '[role="listbox"] [role="option"].active';
+    await expect(page.locator(option)).toHaveCount(1);
+    const { ratio, label } = await contrastOf(page, option, 0);
+    expect(ratio, label).toBeGreaterThanOrEqual(4.5);
+  });
+}
+
 test('each vote button name starts with the count it shows', async ({ page }) => {
   await page.goto('/');
   await ready(page);
