@@ -42,15 +42,30 @@ async function contrastOf(page: Page, selector: string, index: number) {
   );
 }
 
-const pages = ['/', '/roadmap', '/feedback/seed-01/edit'];
-const controls = '.btn:not(.btn-text), .chip, .vote, .roadmap-summary-head a';
+const pages = ['/', '/roadmap', '/feedback/seed-01', '/feedback/seed-01/edit'];
+const controls =
+  '.btn:not(.btn-text), .chip, .vote, .roadmap-summary-head a, .feedback-copy a, .mention, .error';
 
 for (const theme of ['light', 'dark'] as const) {
   for (const path of pages) {
-    test(`buttons keep 4.5:1 text contrast at rest and on hover (${theme}, ${path})`, async ({ page }) => {
-      await page.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
+    test(`buttons and accent text keep 4.5:1 contrast at rest and on hover (${theme}, ${path})`, async ({ page }) => {
+      // Dark runs use the OS preference, the default "system" appearance.
+      await page.emulateMedia({ colorScheme: theme });
       await page.goto(path);
       await ready(page);
+      // No transitions, so a hover is read at its final colour.
+      await page.addStyleTag({ content: '*, *::before, *::after { transition: none !important; }' });
+      if (path === '/') {
+        // A voted button has its own hover colours.
+        await page.locator('button.vote').first().click();
+        await expect(page.locator('button.vote').first()).toHaveAttribute('aria-pressed', 'true');
+      }
+      if (path === '/feedback/seed-01/edit') {
+        // Field errors after an empty save.
+        await page.getByLabel('Feedback title').fill('');
+        await page.getByRole('button', { name: 'Save Changes' }).click();
+        await expect(page.locator('.error').first()).toBeVisible();
+      }
       const count = await page.locator(controls).count();
       const failures: string[] = [];
       for (let i = 0; i < count; i++) {
@@ -59,7 +74,6 @@ for (const theme of ['light', 'dark'] as const) {
         const rest = await contrastOf(page, controls, i);
         if (rest.ratio < 4.5) failures.push(`rest "${rest.label}" ${rest.ratio}`);
         await control.hover();
-        await page.waitForTimeout(250);
         const hover = await contrastOf(page, controls, i);
         if (hover.ratio < 4.5) failures.push(`hover "${hover.label}" ${hover.ratio}`);
         await page.mouse.move(0, 0);

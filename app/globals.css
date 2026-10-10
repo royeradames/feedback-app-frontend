@@ -23,7 +23,11 @@
   --link: #4661e6;
   --purple: #ad1fea;
   --purple-hover: #991bcf;
-  --purple-light: #c75af6;
+  /* Text colours that switch in dark mode, in both dark blocks below. */
+  --option-active: #ad1fea;
+  --mention: #ad1fea;
+  --error-ink: #cd3535;
+  --title-hover: #4661e6;
   --dark: #3a4374;
   --dark-hover: #5d6798;
   /* The design's #d73737 gives 4.26:1 under the button text. */
@@ -51,7 +55,10 @@
     --soft-hover: #3c4570;
     --link: #a9b8ff;
     --link-hover: #c9d3ff;
-    --dark-hover: #5d6798;
+    --option-active: #c75af6;
+    --mention: #c75af6;
+    --error-ink: #ff9d9d;
+    --title-hover: #a9b8ff;
     --line: #3a4166;
     --comment-icon: #5b6488;
     --shadow: 0 10px 40px -7px rgb(0 0 0 / 60%);
@@ -70,7 +77,10 @@
   --soft-hover: #3c4570;
   --link: #a9b8ff;
   --link-hover: #c9d3ff;
-  --dark-hover: #5d6798;
+  --option-active: #c75af6;
+  --mention: #c75af6;
+  --error-ink: #ff9d9d;
+  --title-hover: #a9b8ff;
   --line: #3a4166;
   --comment-icon: #5b6488;
   --shadow: 0 10px 40px -7px rgb(0 0 0 / 60%);
@@ -571,11 +581,7 @@ main {
 }
 .dropdown [role="option"].active,
 .dropdown [role="option"]:hover {
-  color: var(--purple);
-}
-:root[data-theme="dark"] .dropdown [role="option"].active,
-:root[data-theme="dark"] .dropdown [role="option"]:hover {
-  color: var(--purple-light);
+  color: var(--option-active);
 }
 .dropdown [role="option"] svg {
   flex: none;
@@ -638,10 +644,7 @@ main {
   overflow-wrap: anywhere;
 }
 .feedback-copy a:hover {
-  color: var(--blue);
-}
-:root[data-theme="dark"] .feedback-copy a:hover {
-  color: var(--link);
+  color: var(--title-hover);
 }
 .feedback-copy p {
   color: var(--muted);
@@ -674,6 +677,9 @@ main {
 .vote[aria-pressed="true"] {
   background: var(--blue);
   color: #fff;
+}
+.vote[aria-pressed="true"]:hover:not(:disabled, [aria-disabled="true"]) {
+  background: var(--blue-hover);
 }
 .vote[aria-pressed="true"] svg {
   color: #fff;
@@ -841,11 +847,8 @@ main {
   margin-top: 1rem;
 }
 .mention {
-  color: var(--purple);
+  color: var(--mention);
   font-weight: 700;
-}
-:root[data-theme="dark"] .mention {
-  color: var(--purple-light);
 }
 .comment .reply-form {
   grid-area: form;
@@ -899,11 +902,8 @@ textarea {
   border-color: var(--red);
 }
 .error {
-  color: var(--red);
+  color: var(--error-ink);
   margin-top: 0.5rem;
-}
-:root[data-theme="dark"] .error {
-  color: #ff9d9d;
 }
 .comment-actions {
   display: flex;
