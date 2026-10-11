@@ -31,6 +31,7 @@ export function CommentForm({
     if (full) {
       // The note above the field already says why; mark the field and keep the typed text.
       setRefused(true);
+      setError("");
       field.current?.focus();
       return;
     }

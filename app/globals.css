@@ -701,8 +701,9 @@ main {
   width: 18px;
   height: 16px;
 }
+/* A zero count reads in the muted ink, which keeps 4.5:1; half opacity fell to 2.6:1. */
 .comment-count.none span {
-  opacity: 0.5;
+  color: var(--muted);
 }
 .comment-count:hover span {
   text-decoration: underline;
