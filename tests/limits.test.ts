@@ -28,7 +28,7 @@ for (const count of [1, 6, 30, 100]) {
       return;
     }
     const message =
-      'You have 100 feedback requests, the most this demo holds. Delete one before adding another.';
+      'This demo holds 100 feedback requests, the most it can. Delete one before adding another.';
     assert.equal(limitMessage(snapshot, 'feedback'), message);
     assert.throws(create, { message });
   });
@@ -37,7 +37,7 @@ for (const count of [1, 6, 30, 100]) {
 test('at 500 comments, a comment or reply is refused in plain words', () => {
   const snapshot = snapshotSchema.parse(board(100, MAX_COMMENTS));
   const message =
-    'This demo holds 500 comments, the most it can. Delete a feedback request to remove its comments, then try again.';
+    'This demo holds 500 comments, the most it can. Delete a feedback request that has comments, then try again.';
   assert.equal(limitMessage(snapshot, 'comment'), message);
   assert.throws(
     () =>
@@ -48,6 +48,19 @@ test('at 500 comments, a comment or reply is refused in plain words', () => {
         content: 'Hello',
         parentId: null,
         replyLabel: '',
+      }),
+    { message },
+  );
+  // A reply to an existing comment is refused the same way.
+  assert.throws(
+    () =>
+      applyCommand(snapshot, {
+        kind: 'comment',
+        id: newId,
+        feedbackId: snapshot.feedback[0]!.id,
+        content: 'A reply',
+        parentId: snapshot.comments[0]!.id,
+        replyLabel: 'demo',
       }),
     { message },
   );

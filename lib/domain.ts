@@ -184,10 +184,10 @@ export function limitMessage(
 ): string | null {
   if (kind === 'feedback')
     return snapshot.feedback.length >= MAX_FEEDBACK
-      ? `You have ${MAX_FEEDBACK} feedback requests, the most this demo holds. Delete one before adding another.`
+      ? `This demo holds ${MAX_FEEDBACK} feedback requests, the most it can. Delete one before adding another.`
       : null;
   return snapshot.comments.length >= MAX_COMMENTS
-    ? `This demo holds ${MAX_COMMENTS} comments, the most it can. Delete a feedback request to remove its comments, then try again.`
+    ? `This demo holds ${MAX_COMMENTS} comments, the most it can. Delete a feedback request that has comments, then try again.`
     : null;
 }
 export type Command =

@@ -5,9 +5,9 @@ import { board } from '../fixtures/library';
 // The demo's caps (100 requests, 500 comments) at 1, 6, 30 and 100 synthetic requests.
 const storageKey = 'royer-feedback-demo:v1';
 const feedbackLimit =
-  'You have 100 feedback requests, the most this demo holds. Delete one before adding another.';
+  'This demo holds 100 feedback requests, the most it can. Delete one before adding another.';
 const commentLimit =
-  'This demo holds 500 comments, the most it can. Delete a feedback request to remove its comments, then try again.';
+  'This demo holds 500 comments, the most it can. Delete a feedback request that has comments, then try again.';
 
 async function seed(page: Page, count: number, comments = 0) {
   const document = {
