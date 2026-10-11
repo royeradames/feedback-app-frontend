@@ -1,4 +1,5 @@
 "use client";
+import { ZodError } from "zod";
 import {
   createContext,
   useContext,
@@ -160,10 +161,11 @@ function createDemoStore() {
       } catch (error) {
         publish({
           ...state,
+          // A schema failure's message is a JSON issue list; show plain words instead.
           message:
-            error instanceof Error
+            error instanceof Error && !(error instanceof ZodError)
               ? error.message
-              : "This change could not be applied.",
+              : "This change could not be applied. Nothing was changed.",
         });
         return false;
       }

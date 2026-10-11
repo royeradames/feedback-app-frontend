@@ -50,7 +50,7 @@ test('100 requests: the limit is stated before the form, and Add Feedback is ref
   await expect(note).toBeVisible();
   await page.getByLabel('Feedback Title').fill('One more');
   await page.getByLabel('Feedback Detail').fill('Another request');
-  // Keyboard submit from the detail field.
+  // Submit by keyboard.
   await page.getByRole('button', { name: 'Add Feedback' }).focus();
   await page.keyboard.press('Enter');
   await expect(note).toBeFocused();

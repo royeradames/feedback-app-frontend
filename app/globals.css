@@ -905,6 +905,18 @@ textarea {
   color: var(--error-ink);
   margin-top: 0.5rem;
 }
+/* A full demo says so before the form, in the error colour, and takes focus on a refused submit. */
+.limit-note {
+  margin: 0 0 1.5rem;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid var(--error-ink);
+  border-radius: 0.25rem;
+  color: var(--error-ink);
+  overflow-wrap: anywhere;
+}
+.comment-form .limit-note {
+  margin: 0.75rem 0;
+}
 .comment-actions {
   display: flex;
   flex-wrap: wrap;

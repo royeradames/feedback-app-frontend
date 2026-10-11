@@ -1,7 +1,7 @@
 "use client";
 import { useRef, useState } from "react";
 import { useDemo } from "./demo-provider";
-import { commentTextSchema } from "@/lib/domain";
+import { commentTextSchema, limitMessage } from "@/lib/domain";
 import { pluralize } from "@/lib/plural";
 
 const limit = 250;
@@ -23,8 +23,15 @@ export function CommentForm({
   const [pending, setPending] = useState(false);
   const field = useRef<HTMLTextAreaElement>(null);
   const id = parentId ? "reply-" + parentId : "new-comment";
+  const full = limitMessage(demo.snapshot, "comment");
   async function submit() {
     if (demo.busy) return;
+    if (full) {
+      // The note above the field already says why; mark the field and keep the typed text.
+      setError(full);
+      field.current?.focus();
+      return;
+    }
     const parsed = commentTextSchema.safeParse(content);
     if (!parsed.success) {
       setError(parsed.error.issues[0]?.message ?? "Check your comment.");
@@ -75,6 +82,11 @@ export function CommentForm({
             </p>
           </>
         )}
+        {full && (
+          <p className="limit-note" id={id + "-limit"}>
+            {full}
+          </p>
+        )}
         <textarea
           ref={field}
           id={id}
@@ -84,9 +96,14 @@ export function CommentForm({
           value={content}
           onChange={(event) => setContent(event.target.value)}
           aria-invalid={!!error}
-          aria-describedby={id + "-count" + (error ? " " + id + "-error" : "")}
+          aria-describedby={
+            (full ? id + "-limit " : "") +
+            id +
+            "-count" +
+            (error && error !== full ? " " + id + "-error" : "")
+          }
         />
-        {error && (
+        {error && error !== full && (
           <p className="error" id={id + "-error"}>
             {error}
           </p>
