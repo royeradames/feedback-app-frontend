@@ -80,11 +80,14 @@ const commentSchema = z
     replyLabel: z.string().max(80),
   })
   .strict();
+// The browser demo's caps. At a cap, adding is refused with limitMessage, never a validation dump.
+export const MAX_FEEDBACK = 100;
+export const MAX_COMMENTS = 500;
 export const snapshotSchema = z
   .object({
-    feedback: z.array(feedbackSchema).max(100),
-    comments: z.array(commentSchema).max(500),
-    votedIds: z.array(feedbackIdSchema).max(100),
+    feedback: z.array(feedbackSchema).max(MAX_FEEDBACK),
+    comments: z.array(commentSchema).max(MAX_COMMENTS),
+    votedIds: z.array(feedbackIdSchema).max(MAX_FEEDBACK),
   })
   .strict()
   .superRefine((value, context) => {
@@ -174,6 +177,19 @@ export function suggestions(
         a.id.localeCompare(b.id),
     );
 }
+/** The plain-language refusal when the demo is full, or null while there is room. */
+export function limitMessage(
+  snapshot: Snapshot,
+  kind: 'feedback' | 'comment',
+): string | null {
+  if (kind === 'feedback')
+    return snapshot.feedback.length >= MAX_FEEDBACK
+      ? `This demo holds ${MAX_FEEDBACK} feedback requests, the most it can. Delete one before adding another.`
+      : null;
+  return snapshot.comments.length >= MAX_COMMENTS
+    ? `This demo holds ${MAX_COMMENTS} comments, the most it can. Delete a feedback request that has comments, then try again.`
+    : null;
+}
 export type Command =
   | { kind: 'create'; id: string; input: FeedbackInput }
   | { kind: 'edit'; id: string; input: FeedbackInput }
@@ -190,6 +206,8 @@ export type Command =
 // These commands exercise fictional sample data locally. They are not an account permission model.
 export function applyCommand(snapshot: Snapshot, command: Command): Snapshot {
   if (command.kind === 'create') {
+    const full = limitMessage(snapshot, 'feedback');
+    if (full) throw new Error(full);
     const input = feedbackInputSchema.parse(command.input);
     return snapshotSchema.parse({
       ...snapshot,
@@ -210,6 +228,8 @@ export function applyCommand(snapshot: Snapshot, command: Command): Snapshot {
   if (!snapshot.feedback.some((item) => item.id === targetId))
     throw new Error('This feedback is no longer available.');
   if (command.kind === 'comment') {
+    const full = limitMessage(snapshot, 'comment');
+    if (full) throw new Error(full);
     const parent =
       command.parentId === null
         ? null

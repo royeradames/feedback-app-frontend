@@ -8,6 +8,7 @@ import {
   categories,
   statuses,
   feedbackInputSchema,
+  limitMessage,
   type Feedback,
   type FeedbackInput,
 } from "@/lib/domain";
@@ -40,6 +41,9 @@ export function FeedbackForm({ item }: { item?: Feedback }) {
   const [pending, setPending] = useState<"save" | "delete" | null>(null);
   const [confirming, setConfirming] = useState(false);
   const deleteButton = useRef<HTMLButtonElement>(null);
+  const limitNote = useRef<HTMLParagraphElement>(null);
+  // Only a new request can hit the cap; editing never adds one.
+  const full = item ? null : limitMessage(demo.snapshot, "feedback");
   const back = item ? "/feedback/" + item.id : "/";
   const defaults: FeedbackInput = item
     ? {
@@ -53,6 +57,10 @@ export function FeedbackForm({ item }: { item?: Feedback }) {
     defaultValues: defaults,
     onSubmit: async ({ value }) => {
       if (demo.busy) return;
+      if (full) {
+        limitNote.current?.focus();
+        return;
+      }
       const parsed = feedbackInputSchema.safeParse(value);
       if (!parsed.success) {
         const next: Record<string, string> = Object.fromEntries(
@@ -107,6 +115,11 @@ export function FeedbackForm({ item }: { item?: Feedback }) {
         <p className="field-note">
           Saved only in this browser’s demo. Nothing is sent.
         </p>
+        {full && (
+          <p ref={limitNote} className="limit-note" tabIndex={-1}>
+            {full}
+          </p>
+        )}
         <form
           onSubmit={(event) => {
             event.preventDefault();
