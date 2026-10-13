@@ -172,7 +172,8 @@ fieldset {
 }
 /* Headings and main take focus only from code after a page change. */
 h1[tabindex="-1"]:focus,
-main[tabindex="-1"]:focus {
+main[tabindex="-1"]:focus,
+section[tabindex="-1"]:focus {
   outline: none;
 }
 .skip-link {

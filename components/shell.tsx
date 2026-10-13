@@ -106,7 +106,12 @@ export function Shell({ children }: { children: ReactNode }) {
     if (lastPath.current === pathname) return;
     lastPath.current = pathname;
     const main = document.getElementById("main");
-    const target = main?.querySelector<HTMLElement>("h1") ?? main;
+    // A link to a section (#comments) starts at that section instead.
+    const hash = decodeURIComponent(window.location.hash.slice(1));
+    const target =
+      (hash ? document.getElementById(hash) : null) ??
+      main?.querySelector<HTMLElement>("h1") ??
+      main;
     if (!target) return;
     if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
     target.focus({ preventScroll: true });

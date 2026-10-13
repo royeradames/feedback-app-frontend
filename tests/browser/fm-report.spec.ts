@@ -60,6 +60,21 @@ test('a page change moves focus to the new page heading', async ({ page }) => {
   await expect(page.getByRole('heading', { level: 1, name: 'Suggestions' })).toBeFocused();
 });
 
+test('a link to the comments starts focus at the comments, not the page top', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto('/');
+  await ready(page);
+  await page.locator('a[href="/feedback/seed-01#comments"]').click();
+  await expect(page).toHaveURL(/\/feedback\/seed-01#comments$/);
+  await expect(page.locator('#comments')).toBeFocused();
+  await page.keyboard.press('Tab');
+  expect(
+    await page.evaluate(() => Boolean(document.activeElement?.closest('#comments'))),
+  ).toBe(true);
+});
+
 test('an edit that clears the title is refused and keeps the saved title', async ({
   page,
 }) => {
