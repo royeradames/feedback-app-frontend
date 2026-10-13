@@ -1,5 +1,5 @@
 "use client";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   useEffect,
   useRef,
@@ -51,6 +51,8 @@ function DataActions() {
 export function Shell({ children }: { children: ReactNode }) {
   const demo = useDemo();
   const router = useRouter();
+  const pathname = usePathname();
+  const lastPath = useRef(pathname);
   const [shortcuts, setShortcuts] = useState(false);
   const help = useRef<HTMLDetailsElement>(null);
   // The inline head script applies the saved theme before paint; this only
@@ -97,6 +99,18 @@ export function Shell({ children }: { children: ReactNode }) {
     window.addEventListener("keydown", key);
     return () => window.removeEventListener("keydown", key);
   }, [shortcuts, router]);
+  useEffect(() => {
+    // After a page change inside the app, start keyboard and screen reader
+    // users at the new page's heading instead of where the old page left
+    // focus. The first load keeps the browser's own focus.
+    if (lastPath.current === pathname) return;
+    lastPath.current = pathname;
+    const main = document.getElementById("main");
+    const target = main?.querySelector<HTMLElement>("h1") ?? main;
+    if (!target) return;
+    if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
+    target.focus({ preventScroll: true });
+  }, [pathname]);
   useEffect(() => {
     function before(event: BeforeUnloadEvent) {
       if (demo.unsaved) event.preventDefault();

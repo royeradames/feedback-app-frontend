@@ -170,6 +170,11 @@ fieldset {
   white-space: nowrap;
   border: 0;
 }
+/* Headings and main take focus only from code after a page change. */
+h1[tabindex="-1"]:focus,
+main[tabindex="-1"]:focus {
+  outline: none;
+}
 .skip-link {
   position: absolute;
   left: -10000px;

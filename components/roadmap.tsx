@@ -91,7 +91,9 @@ export function Roadmap() {
             key={lane.status}
             id={"lane-" + lane.status}
             role={phone ? "tabpanel" : undefined}
-            aria-labelledby={"heading-" + lane.status}
+            // As a phone tab panel the section is named by its tab; as a
+            // column it is named by its heading.
+            aria-labelledby={(phone ? "tab-" : "heading-") + lane.status}
             className={
               "roadmap-lane " + lane.status + (selected === index ? " selected" : "")
             }
