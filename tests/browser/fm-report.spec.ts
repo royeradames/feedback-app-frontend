@@ -59,6 +59,17 @@ test('a malformed fragment does not break focus after a page change', async ({ p
   expect(errors).toEqual([]);
 });
 
+test('a hidden fragment target falls back to the page heading', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto('/roadmap#tab-planned');
+  await ready(page);
+  await page.getByRole('link', { name: /Go Back/ }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await page.goBack();
+  await expect(page).toHaveURL(/\/roadmap#tab-planned$/);
+  await expect(page.getByRole('heading', { level: 1, name: 'Roadmap' })).toBeFocused();
+});
+
 test('on a phone each roadmap tab panel is named by its tab', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto('/roadmap');

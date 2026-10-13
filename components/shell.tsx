@@ -113,13 +113,16 @@ export function Shell({ children }: { children: ReactNode }) {
     } catch {
       // A malformed fragment (#%) falls back to the page heading.
     }
-    const target =
-      (hash ? document.getElementById(hash) : null) ??
-      main?.querySelector<HTMLElement>("h1") ??
-      main;
-    if (!target) return;
-    if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
-    target.focus({ preventScroll: true });
+    const heading = main?.querySelector<HTMLElement>("h1") ?? main;
+    const section = hash ? document.getElementById(hash) : null;
+    // A hidden section (a phone-only tab on desktop) can't take focus; fall
+    // back to the page heading so focus never stays on <body>.
+    for (const target of [section, heading]) {
+      if (!target) continue;
+      if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
+      target.focus({ preventScroll: true });
+      if (document.activeElement === target) return;
+    }
   }, [pathname]);
   useEffect(() => {
     function before(event: BeforeUnloadEvent) {
