@@ -107,7 +107,12 @@ export function Shell({ children }: { children: ReactNode }) {
     lastPath.current = pathname;
     const main = document.getElementById("main");
     // A link to a section (#comments) starts at that section instead.
-    const hash = decodeURIComponent(window.location.hash.slice(1));
+    let hash = "";
+    try {
+      hash = decodeURIComponent(window.location.hash.slice(1));
+    } catch {
+      // A malformed fragment (#%) falls back to the page heading.
+    }
     const target =
       (hash ? document.getElementById(hash) : null) ??
       main?.querySelector<HTMLElement>("h1") ??

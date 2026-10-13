@@ -103,7 +103,10 @@ export function Board() {
         <div
           className="menu-backdrop"
           aria-hidden="true"
-          onClick={() => setMenuOpen(false)}
+          onClick={() => {
+            setMenuOpen(false);
+            menuButton.current?.focus();
+          }}
         />
         <div id="board-menu" className="board-menu" ref={menu}>
           <section className="side-card" aria-labelledby="filter-heading">

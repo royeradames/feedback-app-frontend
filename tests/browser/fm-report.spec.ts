@@ -35,6 +35,30 @@ test('the phone menu keeps Tab and Shift+Tab inside the menu while it is open', 
   await expect(page.getByRole('button', { name: 'Menu' })).toBeFocused();
 });
 
+test('closing the phone menu from the backdrop returns focus to the menu button', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto('/');
+  await ready(page);
+  await page.getByRole('button', { name: 'Menu' }).click();
+  await page.locator('.menu-backdrop').click({ position: { x: 20, y: 700 } });
+  await expect(page.getByRole('button', { name: 'Menu' })).toBeFocused();
+});
+
+test('a malformed fragment does not break focus after a page change', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.goto('/feedback/seed-01#%');
+  await ready(page);
+  await page.getByRole('link', { name: /Go Back/ }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await page.goBack();
+  await expect(page).toHaveURL(/\/feedback\/seed-01#%$/);
+  await expect(page.getByRole('heading', { level: 1, name: /^Feedback: / })).toBeFocused();
+  expect(errors).toEqual([]);
+});
+
 test('on a phone each roadmap tab panel is named by its tab', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto('/roadmap');
