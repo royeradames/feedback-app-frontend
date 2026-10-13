@@ -70,6 +70,19 @@ test('a hidden fragment target falls back to the page heading', async ({ page })
   await expect(page.getByRole('heading', { level: 1, name: 'Roadmap' })).toBeFocused();
 });
 
+test('a fragment that names a native control focuses it without changing its Tab order', async ({
+  page,
+}) => {
+  await page.goto('/feedback/seed-01/edit#title');
+  await ready(page);
+  await page.getByRole('link', { name: /Go Back/ }).click();
+  await expect(page).toHaveURL(/\/feedback\/seed-01$/);
+  await page.goBack();
+  await expect(page).toHaveURL(/\/edit#title$/);
+  await expect(page.locator('#title')).toBeFocused();
+  expect(await page.locator('#title').getAttribute('tabindex')).toBeNull();
+});
+
 test('on a phone each roadmap tab panel is named by its tab', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto('/roadmap');

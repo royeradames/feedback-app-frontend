@@ -119,7 +119,12 @@ export function Shell({ children }: { children: ReactNode }) {
     // back to the page heading so focus never stays on <body>.
     for (const target of [section, heading]) {
       if (!target) continue;
-      if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
+      // Native controls take focus as they are; only static content needs
+      // tabindex="-1", which would otherwise drop a control from Tab order.
+      target.focus({ preventScroll: true });
+      if (document.activeElement === target) return;
+      if (target.hasAttribute("tabindex")) continue;
+      target.setAttribute("tabindex", "-1");
       target.focus({ preventScroll: true });
       if (document.activeElement === target) return;
     }
