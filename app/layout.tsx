@@ -20,7 +20,6 @@ export const metadata: Metadata = {
   description:
     "Explore a fictional feedback board, roadmap and local edits in this browser. No account or shared data.",
   openGraph: { siteName },
-  robots: { index: false, follow: false },
   icons: { icon: "/icon.svg" },
 };
 export const viewport: Viewport = {
