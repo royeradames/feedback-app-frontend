@@ -1,4 +1,8 @@
-import { z } from 'zod';
+import * as z from 'zod/mini';
+import en from 'zod/v4/locales/en.js';
+
+// Zod Mini ships no locale. English keeps the default issue messages classic Zod gave.
+z.config(en());
 
 export const categorySchema = z.enum([
   'UI',
@@ -17,13 +21,17 @@ export const categories = categorySchema.options;
 export const statuses = statusSchema.options;
 export const feedbackIdSchema = z
   .string()
-  .regex(
-    /^(seed-\d{2}|local-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/,
+  .check(
+    z.regex(
+      /^(seed-\d{2}|local-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/,
+    ),
   );
 const commentIdSchema = z
   .string()
-  .regex(
-    /^(comment-\d{2}|local-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/,
+  .check(
+    z.regex(
+      /^(comment-\d{2}|local-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/,
+    ),
   );
 export const actorSchema = z.enum([
   'demo',
@@ -41,97 +49,96 @@ export const actorSchema = z.enum([
   'user-11',
   'user-12',
 ]);
-export const feedbackInputSchema = z
-  .object({
-    title: z
-      .string()
-      .trim()
-      .min(1, 'Enter a title.')
-      .max(100, 'Use 100 characters or fewer.'),
-    description: z
-      .string()
-      .trim()
-      .min(1, 'Describe your feedback.')
-      .max(1000, 'Use 1,000 characters or fewer.'),
-    category: categorySchema,
-    status: statusSchema,
-  })
-  .strict();
+export const feedbackInputSchema = z.strictObject({
+  title: z
+    .string()
+    .check(
+      z.trim(),
+      z.minLength(1, 'Enter a title.'),
+      z.maxLength(100, 'Use 100 characters or fewer.'),
+    ),
+  description: z
+    .string()
+    .check(
+      z.trim(),
+      z.minLength(1, 'Describe your feedback.'),
+      z.maxLength(1000, 'Use 1,000 characters or fewer.'),
+    ),
+  category: categorySchema,
+  status: statusSchema,
+});
 export const commentTextSchema = z
   .string()
-  .trim()
-  .min(1, 'Write a comment.')
-  .max(250, 'Use 250 characters or fewer.');
-const feedbackSchema = feedbackInputSchema
-  .extend({
-    id: feedbackIdSchema,
-    authorId: actorSchema,
-    baselineVotes: z.number().int().min(0).max(100000),
-    order: z.number().int().min(0).max(100000),
-  })
-  .strict();
-const commentSchema = z
-  .object({
-    id: commentIdSchema,
-    feedbackId: feedbackIdSchema,
-    authorId: actorSchema,
-    content: z.string().min(1).max(1000),
-    parentId: commentIdSchema.nullable(),
-    replyLabel: z.string().max(80),
-  })
-  .strict();
+  .check(
+    z.trim(),
+    z.minLength(1, 'Write a comment.'),
+    z.maxLength(250, 'Use 250 characters or fewer.'),
+  );
+const feedbackSchema = z.extend(feedbackInputSchema, {
+  id: feedbackIdSchema,
+  authorId: actorSchema,
+  baselineVotes: z.number().check(z.int(), z.gte(0), z.lte(100000)),
+  order: z.number().check(z.int(), z.gte(0), z.lte(100000)),
+});
+const commentSchema = z.strictObject({
+  id: commentIdSchema,
+  feedbackId: feedbackIdSchema,
+  authorId: actorSchema,
+  content: z.string().check(z.minLength(1), z.maxLength(1000)),
+  parentId: z.nullable(commentIdSchema),
+  replyLabel: z.string().check(z.maxLength(80)),
+});
 // The browser demo's caps. At a cap, adding is refused with limitMessage, never a validation dump.
 export const MAX_FEEDBACK = 100;
 export const MAX_COMMENTS = 500;
 export const snapshotSchema = z
-  .object({
-    feedback: z.array(feedbackSchema).max(MAX_FEEDBACK),
-    comments: z.array(commentSchema).max(MAX_COMMENTS),
-    votedIds: z.array(feedbackIdSchema).max(MAX_FEEDBACK),
+  .strictObject({
+    feedback: z.array(feedbackSchema).check(z.maxLength(MAX_FEEDBACK)),
+    comments: z.array(commentSchema).check(z.maxLength(MAX_COMMENTS)),
+    votedIds: z.array(feedbackIdSchema).check(z.maxLength(MAX_FEEDBACK)),
   })
-  .strict()
-  .superRefine((value, context) => {
-    const ids = new Set(value.feedback.map((item) => item.id));
-    const comments = new Map(value.comments.map((item) => [item.id, item]));
-    if (
-      ids.size !== value.feedback.length ||
-      comments.size !== value.comments.length ||
-      new Set(value.votedIds).size !== value.votedIds.length
-    )
-      context.addIssue({ code: 'custom', message: 'Duplicate record IDs.' });
-    if (value.votedIds.some((id) => !ids.has(id)))
-      context.addIssue({
-        code: 'custom',
-        message: 'A vote refers to missing feedback.',
-      });
-    for (const comment of value.comments) {
-      const parent =
-        comment.parentId === null ? null : comments.get(comment.parentId);
+  .check(
+    z.superRefine((value, context) => {
+      const ids = new Set(value.feedback.map((item) => item.id));
+      const comments = new Map(value.comments.map((item) => [item.id, item]));
       if (
-        !ids.has(comment.feedbackId) ||
-        (comment.parentId !== null &&
-          (!parent ||
-            parent.parentId !== null ||
-            parent.feedbackId !== comment.feedbackId ||
-            parent.id === comment.id))
+        ids.size !== value.feedback.length ||
+        comments.size !== value.comments.length ||
+        new Set(value.votedIds).size !== value.votedIds.length
       )
+        context.addIssue({ code: 'custom', message: 'Duplicate record IDs.' });
+      if (value.votedIds.some((id) => !ids.has(id)))
         context.addIssue({
           code: 'custom',
-          message: 'A comment relationship is invalid.',
+          message: 'A vote refers to missing feedback.',
         });
-    }
-  });
+      for (const comment of value.comments) {
+        const parent =
+          comment.parentId === null ? null : comments.get(comment.parentId);
+        if (
+          !ids.has(comment.feedbackId) ||
+          (comment.parentId !== null &&
+            (!parent ||
+              parent.parentId !== null ||
+              parent.feedbackId !== comment.feedbackId ||
+              parent.id === comment.id))
+        )
+          context.addIssue({
+            code: 'custom',
+            message: 'A comment relationship is invalid.',
+          });
+      }
+    }),
+  );
 export type Snapshot = z.infer<typeof snapshotSchema>;
 export type Feedback = Snapshot['feedback'][number];
 export type Comment = Snapshot['comments'][number];
 export type FeedbackInput = z.infer<typeof feedbackInputSchema>;
-export const documentSchema = z
-  .object({
-    version: z.literal(1),
-    revision: z.string().uuid(),
-    snapshot: snapshotSchema,
-  })
-  .strict();
+export const documentSchema = z.strictObject({
+  version: z.literal(1),
+  revision: z.string().check(z.uuid()),
+  snapshot: snapshotSchema,
+});
 export const STORAGE_KEY = 'royer-feedback-demo:v1';
 export const MAX_STORAGE_CHARS = 500000;
 export type Document = z.infer<typeof documentSchema>;
