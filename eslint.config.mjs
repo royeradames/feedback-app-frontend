@@ -7,9 +7,6 @@ export default defineConfig([
   globalIgnores([
     ".next/**",
     "node_modules/**",
-    "src/**",
-    "karma.conf.js",
-    "historical/**",
     "test-results/**",
     "playwright-report/**",
   ]),

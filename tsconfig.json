@@ -34,5 +34,5 @@
     ".next/dev/types/**/*.ts",
     "playwright.config.ts"
   ],
-  "exclude": ["node_modules", "src", "historical"]
+  "exclude": ["node_modules"]
 }
