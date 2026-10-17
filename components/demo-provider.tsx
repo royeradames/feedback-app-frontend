@@ -1,5 +1,5 @@
 "use client";
-import * as z from "zod/mini";
+import { $ZodError } from "zod/v4/core";
 import {
   createContext,
   useContext,
@@ -163,7 +163,7 @@ function createDemoStore() {
           ...state,
           // A schema failure's message is a JSON issue list; show plain words instead.
           message:
-            error instanceof Error && !(error instanceof z.core.$ZodError)
+            error instanceof Error && !(error instanceof $ZodError)
               ? error.message
               : "This change could not be applied. Nothing was changed.",
         });
