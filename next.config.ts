@@ -3,6 +3,6 @@ import type { NextConfig } from 'next';
 // Turbopack build cache for Todo and Markdown and shipped the previous CSS.
 const config: NextConfig = {
   poweredByHeader: false,
-  experimental: { turbopackFileSystemCacheForBuild: false },
+  experimental: { inlineCss: true, turbopackFileSystemCacheForBuild: false },
 };
 export default config;
