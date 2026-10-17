@@ -5,10 +5,7 @@ import { Shell } from "@/components/shell";
 import { siteName, siteUrl, webSiteJsonLd } from "@/lib/site";
 import { themeScript } from "@/lib/theme";
 import "./globals.css";
-// Fonts aren't preloaded: text paints at once in next/font's size-matched fallback (display: swap), so the
-// font files needn't compete with the first paint.
 const jost = Jost({
-  preload: false,
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-jost",
