@@ -1,5 +1,5 @@
 "use client";
-import Image from "next/image";
+/* eslint-disable @next/next/no-img-element -- next/image added client JavaScript here without optimizing anything (SVGs, data URLs or unoptimized files). */
 import Link from "next/link";
 import { commentCount, voteCount, type Feedback } from "@/lib/domain";
 import { pluralize } from "@/lib/plural";
@@ -57,11 +57,13 @@ export function FeedbackCard({
         href={"/feedback/" + item.id + "#comments"}
         aria-label={`${pluralize(comments, "comment", "comments")} on ${item.title}`}
       >
-        <Image
+        <img
           src="/assets/shared/icon-comments.svg"
           width={18}
           height={16}
           alt=""
+          loading="lazy"
+          decoding="async"
         />
         <span>{comments}</span>
       </Link>

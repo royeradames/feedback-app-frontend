@@ -1,5 +1,5 @@
 "use client";
-import Image from "next/image";
+/* eslint-disable @next/next/no-img-element -- next/image added client JavaScript here without optimizing anything (SVGs, data URLs or unoptimized files). */
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { actor } from "@/lib/fixtures";
@@ -19,12 +19,14 @@ function CommentRow({ comment }: { comment: Comment }) {
   return (
     <article className="comment" id={comment.id}>
       {user.avatar ? (
-        <Image
+        <img
           src={user.avatar}
           width={40}
           height={40}
           alt=""
           className="avatar"
+          loading="lazy"
+          decoding="async"
         />
       ) : (
         <span className="avatar demo-avatar" aria-hidden="true">

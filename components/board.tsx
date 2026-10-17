@@ -1,5 +1,5 @@
 "use client";
-import Image from "next/image";
+/* eslint-disable @next/next/no-img-element -- next/image added client JavaScript here without optimizing anything (SVGs, data URLs or unoptimized files). */
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { categories, suggestions, type Sort } from "@/lib/domain";
@@ -67,7 +67,7 @@ export function Board() {
             aria-controls="board-menu"
             onClick={() => setMenuOpen(!menuOpen)}
           >
-            <Image
+            <img
               src={
                 menuOpen
                   ? "/assets/shared/mobile/icon-close.svg"
@@ -76,6 +76,8 @@ export function Board() {
               width={20}
               height={17}
               alt=""
+              loading="lazy"
+              decoding="async"
             />
             <span className="sr-only">Menu</span>
           </button>
@@ -131,11 +133,13 @@ export function Board() {
       <section className="board-main" aria-label="Suggestions" inert={menuOpen}>
         <div className="suggestions-bar">
           <p className="suggestions-count" aria-live="polite">
-            <Image
+            <img
               src="/assets/suggestions/icon-suggestions.svg"
               width={23}
               height={24}
               alt=""
+              loading="lazy"
+              decoding="async"
             />
             <span>{pluralize(items.length, "Suggestion", "Suggestions")}</span>
           </p>
@@ -164,11 +168,13 @@ export function Board() {
           </div>
         ) : (
           <section className="empty-state" aria-labelledby="empty-heading">
-            <Image
+            <img
               src="/assets/suggestions/illustration-empty.svg"
               width={130}
               height={137}
               alt=""
+              loading="lazy"
+              decoding="async"
             />
             <h2 id="empty-heading">There is no feedback yet.</h2>
             <p>
