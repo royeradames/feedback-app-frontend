@@ -1,5 +1,5 @@
 "use client";
-import Image from "next/image";
+/* eslint-disable @next/next/no-img-element -- next/image added client JavaScript here without optimizing anything (SVGs, data URLs or unoptimized files). */
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "@tanstack/react-form";
@@ -98,7 +98,7 @@ export function FeedbackForm({ item }: { item?: Feedback }) {
     <div className="page-form">
       <GoBack href={back} />
       <section className="panel form-panel" aria-labelledby="form-heading">
-        <Image
+        <img
           className="form-icon"
           src={
             item
@@ -108,6 +108,8 @@ export function FeedbackForm({ item }: { item?: Feedback }) {
           width={56}
           height={56}
           alt=""
+          loading="lazy"
+          decoding="async"
         />
         <h1 id="form-heading">
           {item ? `Editing ‘${item.title}’` : "Create New Feedback"}
