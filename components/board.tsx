@@ -36,6 +36,26 @@ export function Board() {
     if (!menuOpen) return;
     menu.current?.querySelector<HTMLElement>("button, a")?.focus();
     function key(event: KeyboardEvent) {
+      if (event.key === "Tab") {
+        // The open menu acts like a dialog: Tab and Shift+Tab cycle through
+        // the toggle and the menu's own controls instead of leaving it.
+        const stops = [
+          menuButton.current,
+          ...(menu.current?.querySelectorAll<HTMLElement>("button, a[href]") ?? []),
+        ].filter((element): element is HTMLElement => Boolean(element));
+        const first = stops[0];
+        const last = stops[stops.length - 1];
+        const active = document.activeElement;
+        const inside = stops.some((element) => element === active);
+        if (event.shiftKey && (active === first || !inside)) {
+          event.preventDefault();
+          last?.focus();
+        } else if (!event.shiftKey && (active === last || !inside)) {
+          event.preventDefault();
+          first?.focus();
+        }
+        return;
+      }
       if (event.key !== "Escape") return;
       setMenuOpen(false);
       menuButton.current?.focus();
@@ -85,7 +105,10 @@ export function Board() {
         <div
           className="menu-backdrop"
           aria-hidden="true"
-          onClick={() => setMenuOpen(false)}
+          onClick={() => {
+            setMenuOpen(false);
+            menuButton.current?.focus();
+          }}
         />
         <div id="board-menu" className="board-menu" ref={menu}>
           <section className="side-card" aria-labelledby="filter-heading">

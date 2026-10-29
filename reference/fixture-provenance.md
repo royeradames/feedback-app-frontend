@@ -2,7 +2,7 @@
 
 This is a manually transcribed fictional browser-local fixture, not a certified copy of the current Frontend Mentor starter JSON. No database seed has been imported or executed.
 
-- Frontend: royeradames/feedback-app-frontend, master 532c2d3d5734c855bf6d25ee4e7cda8d44bdd587. Original Angular source/configuration remains in the repository. Root package, lock and TypeScript configuration are preserved under historical/angular.
+- Frontend: royeradames/feedback-app-frontend, master 532c2d3d5734c855bf6d25ee4e7cda8d44bdd587. The original Angular client was removed on October 13, 2026; it stays in git history at that commit.
 - Backend source used only for literal data: royeradames/product-feedback, master 25aa23fe882fad83c14779086641e5a7426bdd2c.
 - Requests: src/db/seeds/productRequests.ts SHA256 d2d76e88dbafb47815350ecb60b8e1ac1f2ba3250ed341d0051cccdf98a55e37.
 - Users: src/db/seeds/users.ts SHA256 59ea10149952956d37b21ecdb5ec1e3845da6897f5b531f590d91fc88b5bd327.
