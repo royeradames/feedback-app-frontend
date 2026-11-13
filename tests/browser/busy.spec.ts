@@ -70,7 +70,7 @@ test('a pending feedback save keeps the form usable, busy and single-submit', as
   await page.goto('/feedback/seed-01/edit');
   await page.getByLabel('Feedback title').fill('Saved once while busy');
   const release = await holdSaveLock(await context.newPage());
-  const save = page.getByRole('button', { name: /Save changes|Saving…/ });
+  const save = page.getByRole('button', { name: /Save Changes|Saving…/ });
   await save.click();
   await expect(save).toHaveText('Saving…');
   await expect(save).toHaveAttribute('aria-busy', 'true');
@@ -101,12 +101,12 @@ test('keyboard voting, commenting and replying keep focus where the person is', 
   await expect(vote).toContainText('112');
   await expect(vote).toBeFocused();
   await page.goto('/feedback/seed-01');
-  await page.getByLabel('Comment', { exact: true }).fill('Kept focus');
-  const post = page.getByRole('button', { name: 'Post comment', exact: true });
+  await page.getByLabel('Add Comment').fill('Kept focus');
+  const post = page.getByRole('button', { name: 'Post Comment', exact: true });
   await post.focus();
   await page.keyboard.press('Enter');
   await expect(
-    page.getByRole('heading', { name: '3 comments and replies' }),
+    page.getByRole('heading', { name: '3 Comments' }),
   ).toBeVisible();
   await expect(post).toBeFocused();
   const reply = page.getByRole('button', {
@@ -117,11 +117,11 @@ test('keyboard voting, commenting and replying keep focus where the person is', 
   await page.getByRole('button', { name: 'Cancel reply' }).click();
   await expect(reply).toBeFocused();
   await reply.click();
-  await page.getByLabel('Reply', { exact: true }).fill('Reply keeps focus');
-  await page.getByRole('button', { name: 'Post reply' }).focus();
+  await page.getByLabel('Reply to @upbeat1811').fill('Reply keeps focus');
+  await page.getByRole('button', { name: 'Post Reply' }).focus();
   await page.keyboard.press('Enter');
   await expect(
-    page.getByRole('heading', { name: '4 comments and replies' }),
+    page.getByRole('heading', { name: '4 Comments' }),
   ).toBeVisible();
   await expect(reply).toBeFocused();
 });

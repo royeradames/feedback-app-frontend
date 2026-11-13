@@ -160,7 +160,7 @@ export const sample = snapshotSchema.parse({
     {
       id: 'comment-04',
       feedbackId: 'seed-02',
-      authorId: 'user-05',
+      authorId: 'user-04',
       parentId: null,
       replyLabel: '',
       content:

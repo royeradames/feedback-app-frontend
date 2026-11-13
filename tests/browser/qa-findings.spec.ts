@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { choose } from './helpers';
 
 declare global {
   interface Window {
@@ -50,21 +51,21 @@ test('validation errors move focus to the first invalid field', async ({
   page,
 }) => {
   await page.goto('/feedback/new');
-  await page.getByRole('button', { name: 'Add feedback', exact: true }).click();
+  await page.getByRole('button', { name: 'Add Feedback', exact: true }).click();
   await expect(page.getByLabel('Feedback title')).toBeFocused();
   await page.getByLabel('Feedback title').fill('A titled idea');
-  await page.getByRole('button', { name: 'Add feedback', exact: true }).click();
+  await page.getByRole('button', { name: 'Add Feedback', exact: true }).click();
   await expect(page.getByText('Enter a title.', { exact: true })).toHaveCount(0);
   await expect(page.getByLabel('Feedback detail')).toBeFocused();
   await page.goto('/feedback/seed-01');
-  await page.getByRole('button', { name: 'Post comment', exact: true }).click();
+  await page.getByRole('button', { name: 'Post Comment', exact: true }).click();
   await expect(page.getByText('Write a comment.', { exact: true })).toBeVisible();
-  await expect(page.getByLabel('Comment', { exact: true })).toBeFocused();
+  await expect(page.getByLabel('Add Comment')).toBeFocused();
   await page
     .getByRole('button', { name: 'Reply to Suzanne Chang', exact: true })
     .click();
-  await page.getByRole('button', { name: 'Post reply' }).click();
-  await expect(page.getByLabel('Reply', { exact: true })).toBeFocused();
+  await page.getByRole('button', { name: 'Post Reply' }).click();
+  await expect(page.getByLabel('Reply to @upbeat1811')).toBeFocused();
 });
 
 test('the board has one meaningful h1 and counts read in the singular', async ({
@@ -77,9 +78,9 @@ test('the board has one meaningful h1 and counts read in the singular', async ({
   await expect(
     page.getByRole('heading', { name: /^\d+ suggestions?$/ }),
   ).toHaveCount(0);
-  await expect(page.getByText('Showing 6', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'bug', exact: true }).click();
-  await expect(page.getByText('Showing 1', { exact: true })).toBeVisible();
+  await expect(page.getByText('6 Suggestions', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Bug', exact: true }).click();
+  await expect(page.getByText('1 Suggestion', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'All', exact: true }).click();
   await expect(page.getByRole('link', { name: /^1 comments on / })).toHaveCount(
     0,
@@ -89,7 +90,7 @@ test('the board has one meaningful h1 and counts read in the singular', async ({
   ).toBeVisible();
   await page.goto('/feedback/seed-03');
   await expect(
-    page.getByRole('heading', { level: 2, name: '1 comment', exact: true }),
+    page.getByRole('heading', { level: 2, name: '1 Comment', exact: true }),
   ).toBeVisible();
 });
 
@@ -108,6 +109,6 @@ test('home declares one site name in og:site_name and WebSite JSON-LD', async ({
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'Product Feedback',
-    url: 'https://feedback-app-frontend.vercel.app/',
+    url: 'https://feedback-app-frontend.royeradames.com/',
   });
 });

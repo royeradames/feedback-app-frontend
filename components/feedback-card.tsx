@@ -2,43 +2,55 @@
 import Image from "next/image";
 import Link from "next/link";
 import { commentCount, voteCount, type Feedback } from "@/lib/domain";
+import { pluralize } from "@/lib/plural";
 import { useDemo } from "./demo-provider";
+import { ChevronUp } from "./icons";
+import { categoryLabel, statusLabel } from "./labels";
+
 export function FeedbackCard({
   item,
   heading = "h2",
+  variant = "list",
 }: {
   item: Feedback;
-  heading?: "h2" | "h3";
+  heading?: "h1" | "h2" | "h3";
+  variant?: "list" | "roadmap";
 }) {
   const demo = useDemo();
   const Heading = heading;
   const votes = voteCount(demo.snapshot, item);
   const comments = commentCount(demo.snapshot, item.id);
   return (
-    <article className="feedback-card" data-feedback-id={item.id}>
+    <article
+      className={`feedback-card ${variant} status-${item.status}`}
+      data-feedback-id={item.id}
+    >
+      {variant === "roadmap" && (
+        <p className="card-status">{statusLabel(item.status)}</p>
+      )}
+      <div className="feedback-copy">
+        <Heading>
+          <Link href={"/feedback/" + item.id}>{item.title}</Link>
+        </Heading>
+        <p>{item.description}</p>
+        <span className="tag">{categoryLabel(item.category)}</span>
+      </div>
       <button
         className="vote"
         type="button"
         disabled={!demo.canMutate}
         aria-busy={demo.busy || undefined}
         aria-pressed={demo.snapshot.votedIds.includes(item.id)}
-        aria-label={`Upvote ${item.title} (${votes} votes)`}
+        aria-label={`Upvote ${item.title} (${pluralize(votes, "vote", "votes")})`}
         onClick={() => void demo.run({ kind: "vote", id: item.id })}
       >
-        <span aria-hidden="true">⌃</span>
+        <ChevronUp />
         <span>{votes}</span>
       </button>
-      <div className="feedback-copy">
-        <Heading>
-          <Link href={"/feedback/" + item.id}>{item.title}</Link>
-        </Heading>
-        <p>{item.description}</p>
-        <span className="tag">{item.category}</span>
-      </div>
       <Link
-        className="comment-count"
+        className={"comment-count" + (comments === 0 ? " none" : "")}
         href={"/feedback/" + item.id + "#comments"}
-        aria-label={`${comments} ${comments === 1 ? "comment" : "comments"} on ${item.title}`}
+        aria-label={`${pluralize(comments, "comment", "comments")} on ${item.title}`}
       >
         <Image
           src="/assets/shared/icon-comments.svg"
@@ -46,7 +58,7 @@ export function FeedbackCard({
           height={16}
           alt=""
         />
-        {comments}
+        <span>{comments}</span>
       </Link>
     </article>
   );
